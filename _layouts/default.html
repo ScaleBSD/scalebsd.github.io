@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="always">
+    <title>{{ page.title }}</title>
+    <link rel="shortcut icon" href="/media/images/favicon.ico">
+
+    <meta property="og:type" content="article" />
+    <link rel="stylesheet" type="text/css" href="/media/compiled_less/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/media/css/pygments.css">
+
+ <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ["\\(","\\)"] ],
+          displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+          processEscapes: false,
+          skipTags: ["script","noscript","style","textarea","code"]
+        }
+      });
+  </script>
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+  </script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-99638564-2', 'auto')
+    ga('send', 'pageview')
+
+  </script>
+ </head>
+<body>
+
+<div class="hero-box">
+  <div class="hero-inner min-padded">
+    <a href="/">
+      <h3 class="heavy pull-left">&laquo; mattmacy.io</h3>
+    </a>
+    <h3 class="white contact-me pull-right">
+      <!-- All on one line seems crazy but it prevents small form factors trying to fit them over multiple lines -->
+      <a href="https://www.twitter.com/Mat_Macy/" alt="Twitter"><i class="icon-twitter"></i></a><a href="https://github.com/mattmacy/" alt="GitHub"><i class="icon-github"></i></a><a href="http://linkedin.com/in/matthew-macy-2493a21" alt="LinkedIn"><i class="icon-linkedin"></i></a><a href="mailto:mat.macy@gmail.com" alt="Email"><i class="icon-envelope-alt"></i></a>
+    </h3>
+  </div>
+</div>
+    <div class="container">
+  {{ content }}
+
+    </div>
+     <link rel="stylesheet" type="text/css" href="/media/css/fontawesome/fontawesome.css" />
+  <!--[if lt IE 9]>
+    <link rel="stylesheet" type="text/css" href="/media/css/fontawesome/fontawesome-ie7.css" />
+  <![endif]-->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,700' rel='stylesheet' type='text/css'>
+
+</body>
+</html>
