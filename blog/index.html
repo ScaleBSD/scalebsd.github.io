@@ -1,0 +1,19 @@
+---
+layout: page
+title: Posts
+---
+      <div class="row">
+      <div class="span8 content-wrapper ">
+        <div class="content-box">
+<h1> Essays </h1>
+
+	<ul class="page-listings">
+
+	  {% for post in site.posts %}
+	    <li><span class=date>{{ post.date | date_to_string }}</span> <h3><a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a></h3></li>
+	  {% endfor %}
+	</ul>
+
+	      </div>
+	      </div>
+</div>
