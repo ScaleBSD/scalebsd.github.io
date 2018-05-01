@@ -1,6 +1,6 @@
 # `make -j96 buildkernel` UNHALTED_CORE_CYCLES
 
-![](https://scalebsd.org/media/svg/2018.04.30/bk10.svg)
+![](/media/svg/2018.04.30/bk10.svg)
 
 # `make -j96 buildworld` UNHALTED_CORE_CYCLES
 ![](https://scalebsd.org/media/svg/2018.04.30/bw1.svg)
