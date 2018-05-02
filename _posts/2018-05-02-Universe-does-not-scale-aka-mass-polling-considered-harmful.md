@@ -1,6 +1,6 @@
 Before submitting substantial changes to FreeBSD one is expected to run `make universe` to compile kernel & world
 for all architectures. This is intrinsically a bit of a slog based on the sheer amount of code one needs to compile
-However, as it turns out, the design of bmake makes it far worse still:
+However, as it turns out, one peculiarity of the design of bmake makes it far worse still:
 
 ```
 last pid: 21086;  load averages: 179.49, 108.02, 50.89                                     up 0+09:31:50  09:52:34
