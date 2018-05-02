@@ -1,5 +1,5 @@
 Before submitting substantial changes to FreeBSD one is expected to run `make universe` to compile kernel & world
-for all architectures. This is intrinsically a bit of a slog based on the sheer amount of code one needs to compile
+for all architectures. This is intrinsically a bit of a slog based on the sheer amount of code one needs to compile.
 However, as it turns out, one peculiarity of the design of bmake makes it far worse still:
 
 ```
