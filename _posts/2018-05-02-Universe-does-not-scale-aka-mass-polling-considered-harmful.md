@@ -43,6 +43,7 @@ A complete universe build on a dual 6180 on a ZFS file system is just over 2 hou
 ```
 
 A second universe build with no local modifications takes 11 minutes to simply check timestamps.
+`make -s -j96 universe -DNO_CLEAN`
 ```
 --------------------------------------------------------------
 >>> make universe completed on Wed May  2 15:37:57 PDT 2018
@@ -80,8 +81,14 @@ index c5eca9936efc..552438fb5189 100644
      if (nready < 0)
 ```
 
-
-`BMAKE_NO_TOKEN_POLL=1 make -j96 universe -DNO_CLEAN  6478.89s user 35075.71s system 8913% cpu 7:46.22 total`
+`BMAKE_NO_TOKEN_POLL=1 make -j96 universe -DNO_CLEAN`
+```
+--------------------------------------------------------------
+>>> make universe completed on Wed May  2 15:49:44 PDT 2018
+(started Wed May  2 15:41:58 PDT 2018)
+--------------------------------------------------------------
+BMAKE_NO_TOKEN_POLL=1 make -j96 universe -DNO_CLEAN  6478.89s user 35075.71s system 8913% cpu 7:46.22 total
+```
 We still see a large amount of system time:
 ```
 last pid:  3484;  load averages: 89.14, 67.10, 78.69                                       up 0+15:24:24  15:45:08
