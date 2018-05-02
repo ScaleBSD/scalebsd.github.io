@@ -100,6 +100,6 @@ ARC: 83G Total, 38G MFU, 40G MRU, 2761K Anon, 793M Header, 4597M Other
 Swap: 2048M Total, 2048M Free
 ```
 
-But if we look at a profile of `UNHALTED_CORE_CYCLES` we see that the time is now spent predominately VFS
+But if we look at a profile of `UNHALTED_CORE_CYCLES` we see that the time is now spent predominately in VFS
 operations.
 ![](/media/svg/2018.05.01/uni4.svg)
