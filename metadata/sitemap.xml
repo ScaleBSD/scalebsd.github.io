@@ -4,4 +4,5 @@
   <url> <loc>http://scalebsd.org/blog/index.html</loc>  </url>
   <url> <loc>http://scalebsd.org/blog/2018/05/01/Introduction </loc></url>
   <url> <loc>http://scalebsd.org/blog/2018/05/01/Buildworld-Scaling-Problems </loc></url>
+  <url> <loc>http://scalebsd.org/blog/2018/05/02/Universe-does-not-scale-aka-mass-polling-considered-harmful </loc></url>
 </urlset>
