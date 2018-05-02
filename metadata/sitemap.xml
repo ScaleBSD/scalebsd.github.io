@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"> 
-  <url> <loc>http://www.scalebsd.org/index.html</loc>  </url>
-  <url> <loc>http://www.scalebsd.org/blog/index.html</loc>  </url>
-  <url> <loc>http://www.scalebsd.org/blog/2018/05/01/Introduction </loc></url>
-  <url> <loc>http://www.scalebsd.org/blog/2018/05/01/Buildworld-Scaling-Problems </loc></url>
+  <url> <loc>http://scalebsd.org/index.html</loc>  </url>
+  <url> <loc>http://scalebsd.org/blog/index.html</loc>  </url>
+  <url> <loc>http://scalebsd.org/blog/2018/05/01/Introduction </loc></url>
+  <url> <loc>http://scalebsd.org/blog/2018/05/01/Buildworld-Scaling-Problems </loc></url>
 </urlset>
