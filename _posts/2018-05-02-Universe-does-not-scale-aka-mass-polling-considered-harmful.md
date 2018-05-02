@@ -31,7 +31,7 @@ Unsurprisingly, this doesn't scale well. It's not clear at what scale this actua
 dual core getting a notification faster than simply sleeping for a millisecond or two to check for work is faster.
 
 
-A complete universe build on a dual 6180 on a ZFS file system is just over 2 hours.
+A complete universe build on a dual 8160 on a ZFS file system is just over 2 hours.
 
 `make -j96 universe`:
 
