@@ -191,10 +191,25 @@ TL;DR a much larger section of code was previously globally serialized on the
 pvh lock and this narrows it down to a couple of code paths. However, what we're trying to achieve ...
 not allowing callers of pmap_delayed_invl_wait to continue until the invalidate global invalidate
 generation catches up with that of the page passed - thus ensuring any caller invalidating it has
-left its critical section - is essentially what EBR (Epoch Based Reclamation) does. The more general
+left its critical section - is essentially what EBR (Epoch Based Reclamation) does: 
+
+   - Upon entry into a read-side protected section, readers set an 
+     active bit and take a snapshot of a global epoch counter. 
+
+   - Synchronize operations increment the epoch counter only if 
+     all active threads have a snapshot of the latest value of the 
+     global counter. 
+
+   - If the epoch counter is successfully incremented twice from 
+     the time synchronize was called, then no references could 
+     exist to objects logically deleted before the synchronize call.
+
+The general
 idea is that we don't want to free a resource (or in this case reference it) until all threads are
-done referencing it. There are existing primitives in the kernel from ConcurrencyKit that implement
+done referencing it. There are existing primitives in the kernel from [ConcurrencyKit](http://concurrencykit.org/) that implement
 this in a more general fashion that have been widely used at scale.
+
+
 
 As an experiment, I implemented a basic wrapper for the ck primitives and change the `pmap_delayed_invl_started()`,
 `pmap_delayed_invl_finished()`, `pmap_delayed_invl_wait()` to call `epoch_enter()`, `epoch_exit()`, and `epoch_wait()`.
