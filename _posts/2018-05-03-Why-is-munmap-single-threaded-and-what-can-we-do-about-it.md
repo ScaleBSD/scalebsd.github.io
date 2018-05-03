@@ -21,8 +21,9 @@ void testcase(unsigned long long *iterations, unsigned long nr)
 ```
 
 I have 96 cpus and I want to get 5 samples:
+
 ```
-macy@anarchy [~/devel/will-it-scale|22:11|4] ./mmap1_processes -t 96 -s 5
+mmacy@anarchy [~/devel/will-it-scale|22:11|4] ./mmap1_processes -t 96 -s 5
 testcase:Anonymous memory mmap/munmap of 128MB
 warmup
 min:9032 max:16299 total:1203113
@@ -41,8 +42,8 @@ average:1008730
 ```
 
 Somewhat interestingly performance actually peaks at 12 processes, plateaus until 24, and then rapidly declines.
-mmacy@anarchy [~/devel/will-it-scale|22:15|10] ./mmap1_processes -t 12 -s 5
 ```
+mmacy@anarchy [~/devel/will-it-scale|22:15|10] ./mmap1_processes -t 12 -s 5
 ...
 measurement
 min:128691 max:165954 total:1716388
