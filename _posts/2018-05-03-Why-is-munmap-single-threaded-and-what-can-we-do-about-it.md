@@ -233,7 +233,7 @@ Difference at 95.0% confidence
 ```
 
 Looking at `UNHALTED_CORE_CYCLES` sample now we see that swap reservation accounting is now the bottleneck.
-[![](/media/svg/2018.05.02/mmap1_vmhack.svg)](/media/svg/2018.05.02/mmap1_vmhack.svg)
+![](/media/svg/2018.05.02/mmap1_vmhack.svg)
 
 This too is fixable, but a topic for another day.
 
