@@ -206,7 +206,7 @@ left its critical section. This is essentially what EBR (Epoch Based Reclamation
 The general
 idea is that we don't want to free a resource (or in this case reference it) until all threads are
 done referencing it. There are existing primitives in the kernel from [ConcurrencyKit](http://concurrencykit.org/) that implement
-this in a more general fashion that have been widely used at scale.See [EBR](http://concurrencykit.org/presentations/ebr.pdf) for more details.
+this in a more general fashion that have been widely used at scale. See [EBR](http://concurrencykit.org/presentations/ebr.pdf) for more details.
 
 
 
