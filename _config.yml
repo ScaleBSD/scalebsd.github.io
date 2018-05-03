@@ -8,3 +8,4 @@ theme: jekyll-theme-tactile
 plugins:
  - jekyll-sitemap
  - jekyll-avatar
+ - jekyll-feed
