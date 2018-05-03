@@ -50,7 +50,7 @@ average:1719430
 ```
 
 A simple sample of `UNHALTED_CORE_CYCLES` will tell us where the system is spending its time.
-![](/media/svg/2018.05.02/mmap1_master.svg)
+[![](/media/svg/2018.05.02/mmap1_master.svg)](/media/svg/2018.05.02/mmap1_master.svg)
 
 It appears that the we're actually rate limited by munmap as opposed to mmap and all of our time is being spent in
 `pmap_remove()`. `pmap_remove()` calls `pmap_delayed_invl_started()`.
@@ -233,7 +233,7 @@ Difference at 95.0% confidence
 ```
 
 Looking at `UNHALTED_CORE_CYCLES` sample now we see that swap reservation accounting is now the bottleneck.
-![](/media/svg/2018.05.02/mmap1_vmhack.svg)
+[![](/media/svg/2018.05.02/mmap1_vmhack.svg)](/media/svg/2018.05.02/mmap1_vmhack.svg)
 
 This too is fixable, but a topic for another day.
 
