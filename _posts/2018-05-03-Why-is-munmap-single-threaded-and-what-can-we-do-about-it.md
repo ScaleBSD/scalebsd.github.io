@@ -45,11 +45,6 @@ Somewhat interestingly performance actually peaks at 12 processes, plateaus unti
 ```
 mmacy@anarchy [~/devel/will-it-scale|22:15|10] ./mmap1_processes -t 12 -s 5
 ...
-measurement
-min:128691 max:165954 total:1716388
-min:121307 max:171995 total:1720264
-min:112751 max:166955 total:1719541
-min:123885 max:173593 total:1718474
 min:120480 max:165747 total:1722483
 average:1719430
 ```
@@ -207,11 +202,6 @@ As an experiment, I implemented a basic wrapper for the ck primitives and change
 ```
 mmacy@anarchy [~/devel/will-it-scale|22:56|2] ./mmap1_processes -t 96 -s 5
 ...
-measurement
-min:34226 max:39701 total:3552502
-min:34196 max:39843 total:3552587
-min:34220 max:39879 total:3552085
-min:34183 max:39879 total:3548786
 min:34124 max:39816 total:3548585
 average:3550909
 ```
@@ -219,14 +209,6 @@ average:3550909
 ```
 x before
 + after
-+----------------------------------------------------------------------+
-|x                                                                    +|
-|x                                                                    +|
-|x                                                                    +|
-|x                                                                    +|
-|x                                                                    +|
-|A                                                                    A|
-+----------------------------------------------------------------------+
     N           Min           Max        Median           Avg        Stddev
 x   5       1005918       1013143       1009119     1008730.8     2895.1156
 +   5       3548585       3552587       3552085       3550909     2039.8783
@@ -237,7 +219,7 @@ Difference at 95.0% confidence
 ```
 
 Looking at `UNHALTED_CORE_CYCLES` sample now we see that swap reservation accounting is now the bottleneck.
-![](/media/svg/2018.05.02/mmap1_vmhack.svg)
+[![](/media/svg/2018.05.02/mmap1_vmhack.svg)](/media/svg/2018.05.02/mmap1_vmhack.svg)
 
 This too is fixable, but a topic for another day.
 
