@@ -21,7 +21,8 @@ void testcase(unsigned long long *iterations, unsigned long nr)
 ```
 
 I have 96 cpus and I want to get 5 samples:
-```macy@anarchy [~/devel/will-it-scale|22:11|4] ./mmap1_processes -t 96 -s 5
+```
+macy@anarchy [~/devel/will-it-scale|22:11|4] ./mmap1_processes -t 96 -s 5
 testcase:Anonymous memory mmap/munmap of 128MB
 warmup
 min:9032 max:16299 total:1203113
@@ -85,6 +86,7 @@ pmap_delayed_invl_started(void)
 	mtx_unlock(&invl_gen_mtx);
 }
 ```
+
 
 So what we see is that every call to `pmap_remove()` is globally serialized on the `invl_gen_mtx` mutex. Processes
 without shared mappings running even on different sockets all have to acquire the same lock to track the pmap
