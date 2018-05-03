@@ -193,14 +193,14 @@ not allowing callers of pmap_delayed_invl_wait to continue until the invalidate 
 generation catches up with that of the page passed - thus ensuring any caller invalidating it has
 left its critical section - is essentially what EBR (Epoch Based Reclamation) does: 
 
-   - Upon entry into a read-side protected section, readers set an 
+   * Upon entry into a read-side protected section, readers set an 
      active bit and take a snapshot of a global epoch counter. 
 
-   - Synchronize operations increment the epoch counter only if 
+   * Synchronize operations increment the epoch counter only if 
      all active threads have a snapshot of the latest value of the 
      global counter. 
 
-   - If the epoch counter is successfully incremented twice from 
+   * If the epoch counter is successfully incremented twice from 
      the time synchronize was called, then no references could 
      exist to objects logically deleted before the synchronize call.
 
