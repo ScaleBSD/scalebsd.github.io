@@ -194,7 +194,7 @@ generation catches up with that of the page passed - thus ensuring any caller in
 left its critical section. 
 
 
-Moving on from what obviously correct in to somewhat more speculative territory... 
+Moving on from what is obviously correct in to somewhat more speculative territory... 
 This is essentially what EBR (Epoch Based Reclamation) does: 
 * Upon entry into a read-side protected section, readers set an 
      active bit and take a snapshot of a global epoch counter. 
