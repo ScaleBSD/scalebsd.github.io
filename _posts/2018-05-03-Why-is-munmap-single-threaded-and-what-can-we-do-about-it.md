@@ -210,7 +210,7 @@ this in a more general fashion that have been widely used at scale.
 
 
 
-As an experiment, I implemented a basic wrapper for the ck primitives and change the `pmap_delayed_invl_started()`,
+As an experiment, I implemented a basic wrapper for the ck primitives, the core of which are `epoch_enter()`, `epoch_exit()`, and `epoch_wait()` and then just changed the `pmap_delayed_invl_started()`,
 `pmap_delayed_invl_finished()`, `pmap_delayed_invl_wait()` to call `epoch_enter()`, `epoch_exit()`, and `epoch_wait()`.
 
 ```
