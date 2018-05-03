@@ -191,7 +191,11 @@ TL;DR a much larger section of code was previously globally serialized on the
 pvh lock and this narrows it down to a couple of code paths. However, what we're trying to achieve ...
 not allowing callers of pmap_delayed_invl_wait to continue until the invalidate global invalidate
 generation catches up with that of the page passed - thus ensuring any caller invalidating it has
-left its critical section. This is essentially what EBR (Epoch Based Reclamation) does: 
+left its critical section. 
+
+
+Moving on from what obviously correct in to somewhat more speculative territory... 
+This is essentially what EBR (Epoch Based Reclamation) does: 
 * Upon entry into a read-side protected section, readers set an 
      active bit and take a snapshot of a global epoch counter. 
 
@@ -211,7 +215,7 @@ this in a more general fashion that have been widely used at scale. See [EBR](ht
 
 
 As an experiment, I implemented a basic wrapper for the ck primitives, the core of which are `epoch_enter()`, `epoch_exit()`, and `epoch_wait()` and then just changed the `pmap_delayed_invl_started()`,
-`pmap_delayed_invl_finished()`, `pmap_delayed_invl_wait()` to call `epoch_enter()`, `epoch_exit()`, and `epoch_wait()`.
+`pmap_delayed_invl_finished()`, `pmap_delayed_invl_wait()` to call `epoch_enter()`, `epoch_exit()`, and `epoch_wait()`. Read the results with the caveat in mind that it's entirely possible that EBR does not address all the needs of the delayed invalidate in pmap.
 
 ```
 mmacy@anarchy [~/devel/will-it-scale|22:56|2] ./mmap1_processes -t 96 -s 5
