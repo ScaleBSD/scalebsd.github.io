@@ -3,4 +3,4 @@ name: Matt Macy
 markdown: kramdown
 permalink: /blog/:year/:month/:day/:title
 
-theme: jekyll-theme-slate
+theme: jekyll-theme-tactile
