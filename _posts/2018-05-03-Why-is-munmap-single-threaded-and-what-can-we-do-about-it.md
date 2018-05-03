@@ -191,8 +191,9 @@ TL;DR a much larger section of code was previously globally serialized on the
 pvh lock and this narrows it down to a couple of code paths. However, what we're trying to achieve ...
 not allowing callers of pmap_delayed_invl_wait to continue until the invalidate global invalidate
 generation catches up with that of the page passed - thus ensuring any caller invalidating it has
-left its critical section - is essentially what EBR (Epoch Based Reclamation) does: 
+left its critical section. This is essentially what EBR (Epoch Based Reclamation). 
 
+### Epoch Based Reclamation involves the following steps:
  * Upon entry into a read-side protected section, readers set an 
      active bit and take a snapshot of a global epoch counter. 
 
