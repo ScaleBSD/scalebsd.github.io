@@ -1,6 +1,6 @@
 
-UDP performance on FreeBSD is bad. Not the quietly admit to your friends that it needs work bad. 
-Nor even the "we don't talk abouth that in polite company bad. But rather the "drop it down a 
+UDP performance on FreeBSD is bad. Not the quietly admit to your friends that "it needs work" bad. 
+Nor even the "we don't talk abouth that in polite company" bad. But rather the "drop it down a 
 seismologically inactive mine, bury it under 50 tons of concrete, and then decree it a government
 secret" bad.
 
