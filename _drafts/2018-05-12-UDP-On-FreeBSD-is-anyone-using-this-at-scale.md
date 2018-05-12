@@ -25,4 +25,7 @@ Actually setting the flowid on the inpcb:
 Looks like:
 [![](/media/svg/2018.05.11/udpsender2.svg)](/media/svg/2018.05.11/udpsender2.svg)
 
-Straightforward to fix. But ...
+Changing the global rwlock read lock path for the global interface list to be epoch protected looks this:
+[![](/media/svg/2018.05.11/udpsender3.svg)](/media/svg/2018.05.11/udpsender3.svg)
+
+We're now contending heavily on updating the refcount for the output interface address.We can fix this by relying on epoch to guarantee liveness for short lived references. 
