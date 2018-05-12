@@ -68,7 +68,7 @@ EBR w/ reserve locking fixed
 [![](/media/svg/2018.05.03/pf4_epoch.svg)](/media/svg/2018.05.03/pf4_epoch.svg)
 
 
-<--
+<!--
 
 mmacy@anarchy [~/devel/will-it-scale|22:09|39] ./page_fault1_processes -t 96 -s 5
 testcase:Anonymous memory page fault
