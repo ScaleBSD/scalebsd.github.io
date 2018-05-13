@@ -31,5 +31,5 @@ Changing the global rwlock read lock path for the global interface list to be ep
 
 We're now contending heavily on updating the refcount for the output interface address.We can fix this by relying on epoch to guarantee liveness for short lived references.
 
-Although we've now increased our singled threaded throughput to 1.18Mpps, 64 netperf jobs actually have lower overall throughput because we're now contending on fewer locks:
+Although we've now increased our singled threaded throughput to 1.18Mpps, 64 netperf jobs actually have lower overall throughput (1.9 Mpps) because we're now contending on fewer locks:
 [![](/media/svg/2018.05.11/udpsender4.svg)](/media/svg/2018.05.11/udpsender4.svg)
