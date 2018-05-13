@@ -4,8 +4,9 @@ Nor even the "we don't talk abouth that in polite company" bad. But rather the "
 seismologically inactive mine, bury it under 50 tons of concrete, and then decree it a government
 secret" bad.
 
-Running 64 netperf clients `netperf -H $DUT -t UDP_STREAM -- -m 1` yields an activity profile like this:
+Running 64 netperf clients `netperf -H $DUT -t UDP_STREAM -- -m 1` achieves 590kpps and yields an activity profile like this:
 [![](/media/svg/2018.05.11/udpsender.svg)](/media/svg/2018.05.11/udpsender.svg)
+
 
 Actually setting the flowid on the inpcb:
 ```
@@ -22,10 +23,10 @@ Actually setting the flowid on the inpcb:
         if (error) {
 ```
 
-Looks like:
+Yields 1.1Mpps and looks like:
 [![](/media/svg/2018.05.11/udpsender2.svg)](/media/svg/2018.05.11/udpsender2.svg)
 
-Changing the global rwlock read lock path for the global interface list to be epoch protected looks this:
+Changing the global rwlock read lock path for the global interface list to be epoch protected yields 1.8-2.5Mpps and looks this:
 [![](/media/svg/2018.05.11/udpsender3.svg)](/media/svg/2018.05.11/udpsender3.svg)
 
 We're now contending heavily on updating the refcount for the output interface address.We can fix this by relying on epoch to guarantee liveness for short lived references. 
