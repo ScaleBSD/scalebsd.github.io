@@ -38,7 +38,7 @@ If we replace the if_afdata rlock path protecting the liveness of L2 table entri
 but fully half the samples are now attributable to the inpcb read lock:
 [![](/media/svg/2018.05.11/udpsender5.svg)](/media/svg/2018.05.11/udpsender5.svg)
 
-It turns out that we're partially receiver limited (on FreeBSD) fixing the inpbhash lock bumps received packets to 3.5Mpps.
+It turns out that we're partially receiver limited (on FreeBSD) fixing the inpcbhash lock bumps received packets to 3.5Mpps.
 
 
 
