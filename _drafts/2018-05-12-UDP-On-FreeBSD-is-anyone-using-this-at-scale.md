@@ -33,3 +33,14 @@ We're now contending heavily on updating the refcount for the output interface a
 
 Although we've now increased our singled threaded throughput to 1.18Mpps, 64 netperf jobs actually have lower overall throughput (1.9 Mpps) because we're now contending on fewer locks:
 [![](/media/svg/2018.05.11/udpsender4.svg)](/media/svg/2018.05.11/udpsender4.svg)
+
+If we replace the if_afdata rlock path protecting the liveness of L2 table entries (ARP or ND6) we get back up to 2.4-2.6Mpps,
+but fully half the samples are now attributable to the inpcb read lock:
+[![](/media/svg/2018.05.11/udpsender5.svg)](/media/svg/2018.05.11/udpsender5.svg)
+
+
+
+
+
+
+
