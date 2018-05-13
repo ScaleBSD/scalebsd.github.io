@@ -29,4 +29,7 @@ Yields 1.1Mpps and looks like:
 Changing the global rwlock read lock path for the global interface list to be epoch protected yields 1.8-2.5Mpps and looks this:
 [![](/media/svg/2018.05.11/udpsender3.svg)](/media/svg/2018.05.11/udpsender3.svg)
 
-We're now contending heavily on updating the refcount for the output interface address.We can fix this by relying on epoch to guarantee liveness for short lived references. 
+We're now contending heavily on updating the refcount for the output interface address.We can fix this by relying on epoch to guarantee liveness for short lived references.
+
+Although we've now increased our singled threaded throughput to 1.18Mpps, 64 netperf jobs actually have lower overall throughput because we're now contending on fewer locks:
+[![](/media/svg/2018.05.11/udpsender4.svg)](/media/svg/2018.05.11/udpsender4.svg)
