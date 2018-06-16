@@ -46,6 +46,7 @@ There is now a patch pending to change the inpcbinfo hash lock (the lookup table
 This changes the profile to:
 [![](/media/svg/2018.05.11/udpsender6.svg)](/media/svg/2018.05.11/udpsender6.svg)
 
+At this point we're actually gated by the cxgbe driver's ability to push packets one at a time through the `if_transmit` interface. The card itself can push 40Mpps but we aren't going to get anywhere near that without pinning the transmitting threads to the CPU socket with the transmit queue that they hash to.
 
 
 
