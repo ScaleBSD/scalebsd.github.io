@@ -1,3 +1,8 @@
+---
+layout: post
+title: "UDP and providing liveness guarantees with epoch"
+date: 2018-06-16
+---
 Up until very recently UDP had some serious scaling issues on FreeBSD. The
 changes taken to address this are an interesting demonstration of using
 epoch over rwlocks and atomics for guaranteeing liveness.
