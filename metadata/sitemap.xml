@@ -6,4 +6,5 @@
   <url> <loc>http://scalebsd.org/blog/2018/05/01/Buildworld-Scaling-Problems </loc></url>
   <url> <loc>http://scalebsd.org/blog/2018/05/02/Universe-does-not-scale-aka-mass-polling-considered-harmful </loc></url>
   <url> <loc>http://scalebsd.org/blog/2018/05/03/Why-is-munmap-single-threaded-and-what-can-we-do-about-it </loc></url>
+    <url> <loc>http://scalebsd.org/blog/2018/06/16/UDP-and-epoch-for-liveness-guarantees </loc></url>
 </urlset>
