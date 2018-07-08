@@ -59,9 +59,14 @@ this can be found in the logging of records by hwpmc in 11 vs 12. In
 11 all cpus log their respective samples to a single global buffer that
 is protected by a global spin lock. On 12, each CPU has its own logging
 buffer - thus requiring no locking to prevent corrupt updates, only the
-disabling of interrupts to protect against interruption by the timer
-interrupt which copies samples recorded by NMI interrupts.
+disabling of interrupts to protect against preemption by another thread or
+interruption by the timer interrupt which copies samples recorded by pmc's 
+NMI interrupts.
 
-Using locke
+An object is said to be "live" if the object's fields are valid and the 
+object itself has not been freed. One can use a lock to guarantee that
+entries in a system global or process global structure has not been while
+a thread is referencing a table entry. One example in 11.x vs 12.x is the
+handling of guaranteeing liveness of cone
 
 
