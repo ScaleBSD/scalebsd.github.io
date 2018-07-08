@@ -66,7 +66,36 @@ NMI interrupts.
 An object is said to be "live" if the object's fields are valid and the 
 object itself has not been freed. One can use a lock to guarantee that
 entries in a system global or process global structure has not been while
-a thread is referencing a table entry. One example in 11.x vs 12.x is the
-handling of guaranteeing liveness of cone
+a thread is referencing a table entry. One example in 11.x vs 12.x is how
+liveness is guaranteed for connection state within the per protocol hash
+table. On 11.x a thread is guaranteed that any connection found in the
+table is a valid connection by requiring that all table readers do a
+shared (for read) acquisition of a per-table reader/writer lock. This
+allowed multiple simultaneous readers while preventing any table updates.
+This was straightforward to reason about, but it is a stronger guarantee
+than is required and it comes at a substantial price. In 12.x we weakened
+the guarantee to only guaranteeing that any connection found during a
+lookup had not been freed. Lookups are protected with epoch and updates
+are serialized with a mutex. As before the lookup returns the connection
+locked to guarantee liveness past lookup - but now, once the lock is
+acquired lookup now checks that the connection has not had the `INP_FREED`
+flag set. If the flag is set it indicates that connection is pending free
+and so we drop the lock and return NULL as if no connection had been found.
+This change adds some additional complexity to readers, but in exchange we
+no longer require a global atomic for the rwlock [explain this to the reader]
+and updates can proceed in parallel with lookups (lookups no longer block
+on updates and vice versa). This change provided a 10-20x reduction in time
+spent in lookups on a loaded multi-socket server.
+
+A more performant alternative to using locks for guaranteeing liveness - but
+still on that nonetheless does not scale to multiple coherency domains - is
+atomically updating a reference counter for the object. Each new thread or
+object holding a pointer to the object increments the reference. When the
+reference is removed from the object or the thread's reference goes out of
+scope the reference is decremented. When the count goes to zero the referenced
+object is freed. For an object frequently referenced by many threads the
+coherency traffic invalidating and migrating the cache line between LLCs
+quickly becomes a bottleneck...
+
 
 
