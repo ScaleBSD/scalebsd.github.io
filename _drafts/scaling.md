@@ -102,7 +102,14 @@ object is freed. For an object frequently referenced by many threads the
 coherency traffic invalidating and migrating the cache line between LLCs
 quickly becomes a bottleneck. There are 2 separate issues to unpack here: 
 - Is reference counting necessary here?
-- 
+- Can anything be done to make reference counting cheaper?
+
+Interestingly enough, for stack local references, reference counting isn't actually
+necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation,
+Hazard Pointers etc can allow us to provide liveness guarantees without any shared
+memory modifications. Reference can, in many cases, be made much cheaper.
+
+
 
 
 
