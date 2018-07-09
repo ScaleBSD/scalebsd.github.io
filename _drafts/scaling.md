@@ -107,8 +107,13 @@ quickly becomes a bottleneck. There are 2 separate issues to unpack here:
 Interestingly enough, for stack local references, reference counting isn't actually
 necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation,
 Hazard Pointers etc can allow us to provide liveness guarantees without any shared
-memory modifications. Reference can, in many cases, be made much cheaper.
+memory modifications. And reference counting can, in many cases, be made much cheaper.
 
+Recent work in UDP to expand the scope of objects tied to the network stack's epoch 
+structure is now also used to guarantee liveness of interface addresses. This now 
+means that references to them that are stack local, where a reference was previously
+acquired at entry and released before return, now no longer need to update the object's
+refcount any more.
 
 
 
