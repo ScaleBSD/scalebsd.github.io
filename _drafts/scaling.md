@@ -42,8 +42,13 @@ order is:
   - poor cache locality between L3 caches
     or NUMA domains
 
-Locking granularity is in essence having one lock being simultaneously
-accessed by many different hardware threads. This stems from having a
+Locking granularity is in essence the relative size of the scope 
+that a single lock protects. The most coarse grained was a single
+lock serializing all access to the kernel "Big Kernel Lock" or 
+"BKL" in Linux or "Giant" in FreeBSD. This was gradually improved to
+locking individual subsystems, then individual data structures, then 
+fields in data structures. Even with fine grained locking, not infrequently
+do we run in to the case of a widely referenced 
 global resource (memory, routing table entry, etc) that can only be
 accessed one at a time. Early on in SMP efforts this can easily be
 addressed by moving from serializing all work in a subsystem (e.g.
@@ -88,14 +93,16 @@ on updates and vice versa). This change provided a 10-20x reduction in time
 spent in lookups on a loaded multi-socket server.
 
 A more performant alternative to using locks for guaranteeing liveness - but
-still on that nonetheless does not scale to multiple coherency domains - is
+still one that nonetheless does not scale to multiple coherency domains - is
 atomically updating a reference counter for the object. Each new thread or
 object holding a pointer to the object increments the reference. When the
 reference is removed from the object or the thread's reference goes out of
 scope the reference is decremented. When the count goes to zero the referenced
 object is freed. For an object frequently referenced by many threads the
 coherency traffic invalidating and migrating the cache line between LLCs
-quickly becomes a bottleneck...
+quickly becomes a bottleneck. There are 2 separate issues to unpack here: 
+- Is reference counting necessary here?
+- 
 
 
 
