@@ -115,6 +115,20 @@ means that references to them that are stack local, where a reference was previo
 acquired at entry and released before return, now no longer need to update the object's
 refcount any more.
 
+The different approaches to scalable reference counting rely on the insight that the
+observed reference count can safely be different from the "true" reference count if 
+we can safely handle zero detection correctly. Although there are many approaches to
+this in the literature [...], the ones I consider most interesting are Linux's percpu 
+refcount and Refcache. The former is a per-cpu counter that degrades to a traditional
+atomically updated reference count when the initial reference holder "kills" the perpcpu
+refcount. This is simple and, if the life cycle of the object closely mirrors that of the
+initial reference holder, can be extremely lightweight. It does not work well if the
+object substantially outlives the initial owner. Refcache works by maintaining a per cpu 
+cache of reference updates and then flushing them when there is conflict or at the end of 
+an "epoch" where an "epoch" is several milliseconds. Zero detection is done by putting 
+the object on a per-cpu "review" list when its global reference count reaches zero. The
+global reference count can be assumed to be the true reference count when it has remained
+at zero for two "epochs".
 
 
 
