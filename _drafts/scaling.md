@@ -128,7 +128,18 @@ cache of reference updates and then flushing them when there is conflict or at t
 an "epoch" where an "epoch" is several milliseconds. Zero detection is done by putting 
 the object on a per-cpu "review" list when its global reference count reaches zero. The
 global reference count can be assumed to be the true reference count when it has remained
-at zero for two "epochs".
+at zero for two "epochs". Refcache doesn't rely on an initial reference holder with a 
+closely correlated life cycle to avoid a degraded state, making it much more general in
+some respects. However, the potentially multiple passes through the review queue can add
+substantial overhead to the zero detection process and the latency between initial candidate
+for free and final release makes it unsuitable for objects with a high rate of turnover. 
+A 10 ms backlog of network mbufs or VM page structures could incur punitive overhead.
 
-
-
+Last on this list of notable scaling anti-patterns is poor cache locality. This can be as
+simple as packing structures contiguously (as opposed to a linked list) so that the prefetcher 
+can furnish the next element as a thread iterates through them. However, at high operation 
+rates, the way in which fields are ordered within a structure can make a decsive difference
+in measured performance. A 45% increase in brk calls per second was measured when a 
+reorganization of the core memory allocation structure reduced from three to two the number 
+of cache lines for the most commonly accessed fields. Once serialization bottlenecks are 
+eliminated, kernel performance is determined by the frequency of cache misses.
