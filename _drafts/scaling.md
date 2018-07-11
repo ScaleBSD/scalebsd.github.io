@@ -20,6 +20,17 @@ of the latest CentOS and Linux releases to show where the gaps are. I'll
 conclude by talking a little bit about what work needs to be done where
 to bridge the gaps.
 
+From 50,000 feet there are two factors that define scaling: serialization and
+scheduling. Ignoring the overhead of locking primitives themselves, serialization
+overhead can roughly be defined as reducing throughput from 1 to 1/n where n 
+is the number of threads waiting to acquire a lock. Scheduling overhead is more 
+difficult to define. In an ideal world a given thread would only ever run on one 
+core, any other threads that it communicated with would be on the same "core 
+complex" - sharing an L3 cache so that IPIs and cache coherency traffic would not
+have to traverse an interconnect and any misses could be refilled without going to 
+memory. In practice this is impossible in the general case as CPUs are commonly
+oversubscribed and the scheduler cannot infer relationships between threads in
+different processes.
 
 Scaling challenges:
  - memory latency
