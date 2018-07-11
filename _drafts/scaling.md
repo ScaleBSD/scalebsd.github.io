@@ -26,11 +26,16 @@ overhead can roughly be defined as reducing throughput from 1 to 1/n where n
 is the number of threads waiting to acquire a lock. Scheduling overhead is more 
 difficult to define. In an ideal world a given thread would only ever run on one 
 core, any other threads that it communicated with would be on the same "core 
-complex" - sharing an L3 cache so that IPIs and cache coherency traffic would not
-have to traverse an interconnect and any misses could be refilled without going to 
-memory. In practice this is impossible in the general case as CPUs are commonly
+complex" - sharing an L3 cache so that IPIs (inter processor interrupts - a 
+facility to allow a cpu to interrupt other cpus) and cache coherency traffic would 
+not have to traverse an interconnect and any misses could be refilled without going
+to memory. In practice this is impossible in the general case as CPUs are commonly
 oversubscribed and the scheduler cannot infer relationships between threads in
-different processes.
+different processes. The further away one cpu is from another the poorer the
+performance for latency sensitive operations such as networking and synchronous IPC.
+And the larger the distance between two cpus, the greater cost of refilling the
+caches when a thread is migrated.
+
 
 Scaling challenges:
  - memory latency
@@ -154,3 +159,26 @@ in measured performance. A 45% increase in brk calls per second was measured whe
 reorganization of the core memory allocation structure reduced from three to two the number 
 of cache lines for the most commonly accessed fields. Once serialization bottlenecks are 
 eliminated, kernel performance is determined by the frequency of cache misses.
+
+Whereas the ideals we strive for with serialization and locality are easy to define - minimal
+sharing and cache misses - optimal scheduling is essential impossible to define. One can add
+more knowledge about data structures and sharing to the scheduler, but that in turn slows 
+down scheduling decisions. Two communicating threads with a small working set will
+benefit from sharing an L2 cache, two communicating threads with a larger working set will
+be adversely impacted by sharing an L2 cache. A particularly egregious example of where FreeBSD
+falls down due to thread scheduling on multiple sockets is measured throughput on TCP
+connections to localhost. On a ~3Ghz single socket system FreeBSD can achieve 50-60Gbps, partly
+by offloading network processing to _the_ `netisr` thread. On a dual socket system of the same
+clock speed, the measured throughput drops to 18-32Gbps. The worst case is when the two 
+communicating processes are on one socket and the `netisr` thread is on the other so the 
+notification for every packet has to cross the interconnect between sockets. At least on a dual
+socket, Linux does network processing inline (i.e. no service thread) when doing TCP to localhost. 
+Thus, although it achieves lower throughput than FreeBSD does on a single socket, provided both
+processes are scheduled on the same socket it achieves a consistent 35Gbps. There are a number
+of issues to unpack with this issue....
+
+
+
+
+
+
