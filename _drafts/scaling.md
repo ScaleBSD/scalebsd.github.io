@@ -154,7 +154,7 @@ A 10 ms backlog of network mbufs or VM page structures could incur punitive over
 Last on this list of notable scaling anti-patterns is poor cache locality. This can be as
 simple as packing structures contiguously (as opposed to a linked list) so that the prefetcher 
 can furnish the next element as a thread iterates through them. However, at high operation 
-rates, the way in which fields are ordered within a structure can make a decsive difference
+rates, the way in which fields are ordered within a structure can make a decisive difference
 in measured performance. A 45% increase in brk calls per second was measured when a 
 reorganization of the core memory allocation structure reduced from three to two the number 
 of cache lines for the most commonly accessed fields. Once serialization bottlenecks are 
