@@ -32,7 +32,7 @@ Scaling solutions:
  - distinguishing between liveness and mutual exclusion
 
 
-One generally progressives through distinct levels as one increases the
+One generally progresses through distinct levels as one increases the
 number of hardware threads that one is trying to exploit. Generally the
 order is:
   - locking granularity
