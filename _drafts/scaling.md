@@ -179,6 +179,35 @@ of issues to unpack with this issue....
 
 
 
+## Appendix A - FreeBSD Serialization Primitives
+
+#### mutex
+
+Mutex is the most straightforward primitive. There are two classes, `MTX_DEF` and `MTX_SPIN`. A `MTX_SPIN` 
+mutex is considered "heavyweight" because it disables interrupts. It can be acquired in any context. While
+it is held (and with interrupts disabled in general) a thread can only acquire other `MTX_SPIN` locks and 
+cannot allocate memory or sleep. While holding a `MTX_DEF` lock a thread can do anything that would not 
+entail sleeping (acquire either types of mutex, rwlocks, non-sleepable memory allocations etc.). While 
+waiting to acquire a `MTX_SPIN` mutex a thread will "spin" polling the lock for release by its current holder.
+While waiting to acquire a `MTX_DEF` a thread will "adaptively spin" on it, polling for release if the 
+current holder is running and being enqueued a `turnstile` if the current holder has been preempted. 
+`Turnstiles` are faciility for priority propagation allowing blocked threads to "lend" their scheduler
+priority to the current lock holder as a mechanism for avoiding priority inversion.
+
+
+#### rwlock
+
+
+
+#### sx
+
+#### rmlock
+
+#### lockmgr
+
+#### epoch
+
+
 
 
 
