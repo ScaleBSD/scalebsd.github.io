@@ -218,14 +218,35 @@ Blocked readers and writers are maintained on sleepqueues and priority propagati
 
 #### rmlock
 
-Like the rwlock and sx, the rmlock "read mostly lock" is a reader/writer lock. It's critical difference is that
-acquisition for read does not involve any atomics...
+Like the rwlock and sx, the rmlock "read mostly lock" is a reader/writer lock. Its critical difference is that
+acquisition for read is extremely fast and does not involve any atomics. Acquisition for write is extremely expensive.
+In its current incarnation it involves a system wide IPI to all other cpus. This is actually a reasonable primitive
+for guaranteeing liveness if updates are infrequent enough. It is easy to reason about, having the same semantics
+as familiar rwlocks.
 
 #### lockmgr
 
+Lockmgr is something of an anachronism. It has some unique features required by the VFS (virtual file system)
+layer. It is generally not a bottleneck in today's code and its idiosyncracies are outside the scope of what
+I hope to touch on.
+
 #### epoch
 
-
-
+The epoch primitive allows the kernel to guarantee that epoch protected structures will remain live while a thread 
+in an epoch section. Executing `do_stuff()` in an epoch section looks something like:
+```
+ epoch_enter(global_epoch);
+ do_stuff(); ...
+ epoch_exit(global_epoch);
+``` 
+A thread deleting something referenced within an epoch section can either synchronously wait for all threads in an
+epoch section during the current epoch plus a grace period or it can enqueue the object to freed at a later time
+allowing a service thread to confirm - at lower cost than a synchronous operation - that a grace period has elapsed.
+In many respects the read side of epoch has similar characteristics to the read side of an rmlock. However, it does 
+not provide a mutual exclusion guarantee. Modifications to an epoch protected data structure can proceed in parallel
+with readers. Modifications do typically need to be explicitly serialized with respect to each other. Thus a mutex 
+is used to protect a writer against other writers. Although its implementation and the performance tradeoffs are
+completely different from Linux's RCU, it largely supports the same programming design patterns. Epoch is new in 
+FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit's epoch (Epoch Based Reclamation) API.
 
 
