@@ -218,6 +218,8 @@ Blocked readers and writers are maintained on sleepqueues and priority propagati
 
 #### rmlock
 
+Like the rwlock and sx, the rmlock "read mostly lock" is a reader/writer lock. It's critical difference is that
+acquisition for read does not involve any atomics...
 
 #### lockmgr
 
