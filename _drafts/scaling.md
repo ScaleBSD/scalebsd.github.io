@@ -191,7 +191,7 @@ entail sleeping (acquire either types of mutex, rwlocks, non-sleepable memory al
 waiting to acquire a `MTX_SPIN` mutex a thread will "spin" polling the lock for release by its current holder.
 While waiting to acquire a `MTX_DEF` a thread will "adaptively spin" on it, polling for release if the 
 current holder is running and being enqueued a `turnstile` if the current holder has been preempted. 
-`Turnstiles` are faciility for priority propagation allowing blocked threads to "lend" their scheduler
+`Turnstile`s are faciility for priority propagation allowing blocked threads to "lend" their scheduler
 priority to the current lock holder as a mechanism for avoiding priority inversion.
 
 
