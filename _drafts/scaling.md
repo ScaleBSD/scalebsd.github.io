@@ -183,7 +183,9 @@ of issues to unpack with this issue....
 
 #### mutex
 
-Mutex is the most straightforward primitive. There are two classes, `MTX_DEF` and `MTX_SPIN`. A `MTX_SPIN` 
+Mutex is the most straightforward primitive, ownership is acquired by a thread doing a compare and swap 
+operation on it with a pointer to the acquiring thread's structure. If the lock already contains a thread 
+pointer it is owned, if not it is free. There are two classes, `MTX_DEF` and `MTX_SPIN`. A `MTX_SPIN` 
 mutex is considered "heavyweight" because it disables interrupts. It can be acquired in any context. While
 it is held (and with interrupts disabled in general) a thread can only acquire other `MTX_SPIN` locks and 
 cannot allocate memory or sleep. While holding a `MTX_DEF` lock a thread can do anything that would not 
@@ -192,16 +194,30 @@ waiting to acquire a `MTX_SPIN` mutex a thread will "spin" polling the lock for 
 While waiting to acquire a `MTX_DEF` a thread will "adaptively spin" on it, polling for release if the 
 current holder is running and being enqueued a `turnstile` if the current holder has been preempted. 
 `Turnstile`s are faciility for priority propagation allowing blocked threads to "lend" their scheduler
-priority to the current lock holder as a mechanism for avoiding priority inversion.
-
+priority to the current lock holder as a mechanism for avoiding priority inversion. In other words, if 
+the blocked thread is higher priority the lockholder's scheduler priority will be elevated to that of the 
+blocked thread.
 
 #### rwlock
 
-
+The rwlock extends the semantics of the `MTX_DEF` mutex by supporting two modes - single writer and multiple
+readers. Its implementation is similar to that of mutex with some additional state assigned to the lower bits
+of the lock field. In single writer mode it behaves the same as a mutex would. In reader mode, multiple readers 
+can  acquire the lock and writers are blocked until all readers drop the lock. In this mode we can no longer
+efficiently track the lockholders' state so we cannot propagate priority and adaptive spinning becomes more 
+speculative. It supports an arbitrary number of readers, so it's the first primitive developers have traditionally
+reached for when trying to guarantee liveness of fields during a table lookup. However, every read acquisition
+and release involves an atomic update of the lock. When the lock is shared across core complexes (and thus
+updates entail cache coherency traffic between LLCs to transition the previous holder's cacheline from 
+modified/exclusive to invalid) its use can quickly become very expensive.
 
 #### sx
 
+The sx lock is logically equivalent to the rwlock with the critical difference being that a lockholder can sleep.
+Blocked readers and writers are maintained on sleepqueues and priority propagation is not done.
+
 #### rmlock
+
 
 #### lockmgr
 
