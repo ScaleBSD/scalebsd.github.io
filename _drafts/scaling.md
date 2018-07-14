@@ -204,8 +204,10 @@ The rwlock extends the semantics of the `MTX_DEF` mutex by supporting two modes 
 readers. Its implementation is similar to that of mutex with some additional state assigned to the lower bits
 of the lock field. In single writer mode it behaves the same as a mutex would. In reader mode, multiple readers 
 can  acquire the lock and writers are blocked until all readers drop the lock. In this mode we can no longer
-efficiently track the lockholders' state so we cannot propagate priority and adaptive spinning becomes more 
-speculative. It supports an arbitrary number of readers, so it's the first primitive developers have traditionally
+efficiently track the lockholders' state so we cannot propagate priority and it is not possible for an acquirer
+to know if all holders are running. Thus a thread can only spin speculatively.
+
+It supports an arbitrary number of readers, so it's the first primitive developers have traditionally
 reached for when trying to guarantee liveness of fields during a table lookup. However, every read acquisition
 and release involves an atomic update of the lock. When the lock is shared across core complexes (and thus
 updates entail cache coherency traffic between LLCs to transition the previous holder's cacheline from 
