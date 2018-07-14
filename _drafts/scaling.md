@@ -241,14 +241,16 @@ is in an epoch section. Executing `do_stuff()` in an epoch section looks somethi
  do_stuff(); ...
  epoch_exit(global_epoch);
 ``` 
-A thread deleting something referenced within an epoch section can either synchronously wait for all threads in an
-epoch section during the current epoch plus a grace period or it can enqueue the object to freed at a later time
+A thread deleting an object referenced within an epoch section can either synchronously wait for all threads in an
+epoch section during the current epoch plus a grace period or it can enqueue the object to be freed at a later time
 allowing a service thread to confirm - at lower cost than a synchronous operation - that a grace period has elapsed.
 In many respects the read side of epoch has similar characteristics to the read side of an rmlock. However, it does 
 not provide a mutual exclusion guarantee. Modifications to an epoch protected data structure can proceed in parallel
 with readers. Modifications do typically need to be explicitly serialized with respect to each other. Thus a mutex 
 is used to protect a writer against other writers. Although its implementation and the performance tradeoffs are
-completely different from Linux's RCU, it largely supports the same programming design patterns. Epoch is new in 
+completely different from Linux's RCU, it largely supports the same programming design patterns.There are two variants
+of epoch, preemptible and non-preemptible. A non-preemptible epoch is lighter weight but does not permit the calling
+thread to acquire any lock type other than `MTX_SPIN` mutexes. Epoch is new in 
 FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit's epoch (Epoch Based Reclamation) API.
 
 
