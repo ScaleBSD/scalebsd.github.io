@@ -234,8 +234,8 @@ I hope to touch on.
 
 #### epoch
 
-The epoch primitive allows the kernel to guarantee that epoch protected structures will remain live while a thread 
-in an epoch section. Executing `do_stuff()` in an epoch section looks something like:
+The epoch primitive allows the kernel to guarantee that structures protected by it will remain live while a thread 
+is in an epoch section. Executing `do_stuff()` in an epoch section looks something like:
 ```
  epoch_enter(global_epoch);
  do_stuff(); ...
