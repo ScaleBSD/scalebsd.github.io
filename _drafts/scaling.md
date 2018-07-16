@@ -175,8 +175,31 @@ notification for every packet has to cross the interconnect between sockets. At 
 socket, Linux does network processing inline (i.e. no service thread) when doing TCP to localhost. 
 Thus, although it achieves lower throughput than FreeBSD does on a single socket, provided both
 processes are scheduled on the same socket it achieves a consistent 35Gbps. There are a number
-of issues to unpack with this issue....
+of issues to unpack here: the existence of only one netisr thread for the entire system, where the
+sender, receiver, and `netisr` thread should be scheduled, and how to convey to the scheduler that
+the three different threads are communicating with each other. Nonetheless, the key take away here
+should be that latency can determine usable bandwidth and poor scheduling decisions can have a
+devastating impact on performance when we move from single socket to dual socket.
 
+For users who understands in advance what workloads they will be running, the situation is manageable.
+The `cpuset` command allows one to assign processor sets to processes, restricting the choices that
+the scheduler has available to it.
+
+## Measuring Scalability
+As our first step on a whirlwind tour of measuring scalability we'll run the "will-it-scale" set of
+benchmarks to measure the aggregate number of operations per second. First single-threaded where
+we work our way up from a single process to one for every processor thread. And then multi-threaded
+with a single process, working it's way from one thread to a thread for every processor thread.
+Following that we'll be looking at somewhat more real world workloads whose performance is determined
+in part by parallelism in the kernel: the nginx web server serving small static objects, memcached,
+and PostgreSQL.
+
+We start with 11.1 as it is the latest release that does not have any of the recent VM scalability work
+to it. Thus making it a good baseline to measure any progress against.Benchmarking on `-CURRENT`, the 
+development branch will show the scalability improvements over the last year or so. CentOS 7.4 is 
+representative of what the typical Linux deployment sees and kind of sets a minimum threshold for where
+FreeBSD needs to be. Then last we look at Linux 4.18 - the latest Linux release to provide ceteris paribus
+measurements against the Linux equivalent of the FreeBSD development branch.
 
 
 ## Appendix A - FreeBSD Serialization Primitives
