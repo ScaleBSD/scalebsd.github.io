@@ -313,3 +313,6 @@ Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
 A. Clements, The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
 
 D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
+
+Q. Wang, T. Stamler, and G. Parmer, “Parallel sections: Scaling system-level data-structures,” in
+Proceedings of the ACM EuroSys Conference, 2016
