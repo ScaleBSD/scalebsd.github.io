@@ -310,11 +310,6 @@ A.  T.  Clements,  M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable addr
 Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
 
 
-F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In
-Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, August 2007.
-
-F. Ellen, Y. Lev, V. Luchango, and M. Moir.   SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
-
 A. Clements, The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
 
 D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
