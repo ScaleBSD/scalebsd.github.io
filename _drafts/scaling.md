@@ -277,3 +277,44 @@ thread to acquire any lock type other than `MTX_SPIN` mutexes. Epoch is new in
 FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit's epoch (Epoch Based Reclamation) API.
 
 
+## Bibliography
+
+ K. Fraser, Practical lock-freedom, Ph.D. Thesis, University of Cambridge Computer Laboratory, 2004.
+ 
+Hart, T. E., McKenney, P. E., Demke Brown, A., Walpole, J. 2007. Performance of memory reclamation for lockless synchronization. Journal of Parallel and Distributed Computing 67(12): 1270-1285; 
+http://dx.doi.org/10.1016/j.jpdc.2007.04.010
+
+McKenney, P. E. 2011. Is parallel programming hard, and, if so, what can you do about it? kernel.org; 
+https://www.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html 
+ 
+ M.M. Michael, Hazard pointers: safe memory reclamation for lock-free
+objects, IEEE Trans. Parallel Distrib. Syst. 15 (6) (2004) 491–504.
+
+  
+Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M. M., Vechev, M. 2011. Laws of 
+order: expensive synchronization in concurrent algorithms cannot be eliminated. In Proceedings 
+of the 38th Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages: 487-498; 
+http://doi.acm.org/10.1145/1926385.1926442
+
+
+Herlihy, M., Shavit, N. 2008. The Art of Multiprocessor Programming. San Francisco: Morgan Kaufmann Publishers Inc. 
+
+S. Boyd-Wickizer, A. T. Clements, Y. Mao, A. Pesterev, M. F. Kaashoek, R. Morris, and N. Zeldovich. An analysis of Linux scalability to many cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI), Vancouver, Canada, Oct. 2010.
+
+J. Corbet. The search for fast, scalable counters, May 2010. http://lwn.net/Articles/170003/.
+
+F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
+
+
+A.  T.  Clements,  M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable address spaces for multithreaded applications. In
+Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
+
+
+F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In
+Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, August 2007.
+
+F. Ellen, Y. Lev, V. Luchango, and M. Moir.   SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
+
+A. Clements, The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
+
+D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
