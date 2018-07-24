@@ -4,7 +4,23 @@ As we approach 2019 and commodity core counts continue to rise it's worth
 looking in to how well FreeBSD can take advantage of larger core count and
 multi-socket systems. The ThreadRipper 2 will make 32-core (64 threads) systems
 commodity and EPYC2 will make it possible to have 128 cores (256 threads) in a
-dual socket system. Measuring scalability is fraught with pitfalls as
+dual socket system. FreeBSD has always existed at the "knee" of the hardware 
+commodity curve. As the definition of "commodity" moves, FreeBSD needs to 
+keep pace to maintain its relevance in the server space.
+
+Scalability can be defined on a number of axes: 
+ - work constant (WC) - the amount of work done per processor remains constant
+ - memory constant (MC) - the data set size per processor remains constant
+ - time constant (TC) - the time to execute a given workload remains constant
+ 
+`WC` roughly translates to what is defined as `strong scaling` as the number of
+processors available to complete a task increases the extent to which the time
+to complete the task decreases. `TC` is equivalent to `weak scaling` - the degree
+to which the amount of work accomplished increases as the number of processors 
+increases. For the purposes of this article scaling will be `weak scaling` as 
+we will be defining scalability by the aggregate number of operations performed
+during benchmarks. In general, extrapolating from these scalability measurements
+to actual application performance is fraught with pitfalls as
 performance bottlenecks are application and workload specific. Nonetheless,
 the OS impact on any given workload can be chracterized as a combination
 of the time spent in system calls and the impact of scheduling decisions. The
