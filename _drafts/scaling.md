@@ -52,16 +52,29 @@ performance for latency sensitive operations such as networking and synchronous 
 And the larger the distance between two cpus, the greater cost of refilling the
 caches when a thread is migrated.
 
-
-Scaling challenges:
+The scaling challenges stem from three factors:
  - memory latency
  - limits to coherency traffic
  - shared globally unique resources
 
-Scaling solutions:
+To a large degree the scaling solutions are all a combination of:
  - per cpu resources
  - relaxing constraints
  - distinguishing between existence guarantees and mutual exclusion
+
+The first two scaling challenges, memory latency and the bounds on coherency traffic,
+are fundamental to the evolution of computer hardware over the last decade as the 
+design artifacts formerly only seen in high end systems make there way even in to
+consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
+becoming an increasingly leaky abstraction. Cache coherence logic in the processors
+provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
+all accustomed to. However, at its limit, the observed performance is defined by the
+actual implementation of a distributed memory with all updates performed by message 
+passing. Performance being dictated by the message latency and bandwidth of this
+machinery.
+
+
+
 
 
 One generally progresses through distinct levels as one increases the
