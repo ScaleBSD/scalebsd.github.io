@@ -45,7 +45,7 @@ Scaling challenges:
 Scaling solutions:
  - per cpu resources
  - relaxing constraints
- - distinguishing between liveness and mutual exclusion
+ - distinguishing between existence guarantees and mutual exclusion
 
 
 One generally progresses through distinct levels as one increases the
@@ -53,8 +53,8 @@ number of hardware threads that one is trying to exploit. Generally the
 order is:
   - locking granularity
   - oversharing
-  - using locks to guarantee liveness
-  - using atomics to guarantee liveness
+  - using locks to provide existence guarantees
+  - using atomic references to provide existence guarantees
   - poor cache locality between L3 caches
     or NUMA domains
 
@@ -84,11 +84,11 @@ disabling of interrupts to protect against preemption by another thread or
 interruption by the timer interrupt which copies samples recorded by pmc's 
 NMI interrupts.
 
-An object is said to be "live" if the object's fields are valid and the 
-object itself has not been freed. One can use a lock to guarantee that
-entries in a system global or process global structure has not been while
+
+One can use a lock to guarantee that
+entries in a system global or process global structure has not been freed while
 a thread is referencing a table entry. One example in 11.x vs 12.x is how
-liveness is guaranteed for connection state within the per protocol hash
+existence is guaranteed for connection state within the per protocol hash
 table. On 11.x a thread is guaranteed that any connection found in the
 table is a valid connection by requiring that all table readers do a
 shared (for read) acquisition of a per-table reader/writer lock. This
@@ -98,7 +98,7 @@ than is required and it comes at a substantial price. In 12.x we weakened
 the guarantee to only guaranteeing that any connection found during a
 lookup had not been freed. Lookups are protected with epoch and updates
 are serialized with a mutex. As before the lookup returns the connection
-locked to guarantee liveness past lookup - but now, once the lock is
+locked to guarantee existence past lookup - but now, once the lock is
 acquired lookup now checks that the connection has not had the `INP_FREED`
 flag set. If the flag is set it indicates that connection is pending free
 and so we drop the lock and return NULL as if no connection had been found.
@@ -108,7 +108,7 @@ and updates can proceed in parallel with lookups (lookups no longer block
 on updates and vice versa). This change provided a 10-20x reduction in time
 spent in lookups on a loaded multi-socket server.
 
-A more performant alternative to using locks for guaranteeing liveness - but
+A more performant alternative to using locks for guaranteeing existence - but
 still one that nonetheless does not scale to multiple coherency domains - is
 atomically updating a reference counter for the object. Each new thread or
 object holding a pointer to the object increments the reference. When the
@@ -122,11 +122,11 @@ quickly becomes a bottleneck. There are 2 separate issues to unpack here:
 
 Interestingly enough, for stack local references, reference counting isn't actually
 necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation,
-Hazard Pointers etc can allow us to provide liveness guarantees without any shared
+Hazard Pointers etc can allow us to provide existence guarantees without any shared
 memory modifications. And reference counting can, in many cases, be made much cheaper.
 
 Recent work in UDP to expand the scope of objects tied to the network stack's epoch 
-structure is now also used to guarantee liveness of interface addresses. This now 
+structure is now also used to guarantee existence of interface addresses. This now 
 means that references to them that are stack local, where a reference was previously
 acquired at entry and released before return, now no longer need to update the object's
 refcount any more.
@@ -231,7 +231,7 @@ efficiently track the lockholders' state so we cannot propagate priority and it 
 to know if all holders are running. Thus a thread can only spin speculatively.
 
 It supports an arbitrary number of readers, so it's the first primitive developers have traditionally
-reached for when trying to guarantee liveness of fields during a table lookup. However, every read acquisition
+reached for when trying to guarantee existence of fields during a table lookup. However, every read acquisition
 and release involves an atomic update of the lock. When the lock is shared across core complexes (and thus
 updates entail cache coherency traffic between LLCs to transition the previous holder's cacheline from 
 modified/exclusive to invalid) its use can quickly become very expensive.
@@ -246,7 +246,7 @@ Blocked readers and writers are maintained on sleepqueues and priority propagati
 Like the rwlock and sx, the rmlock "read mostly lock" is a reader/writer lock. Its critical difference is that
 acquisition for read is extremely fast and does not involve any atomics. Acquisition for write is extremely expensive.
 In its current incarnation it involves a system wide IPI to all other cpus. This is actually a reasonable primitive
-for guaranteeing liveness if updates are infrequent enough. It is easy to reason about, having the same semantics
+for guaranteeing existence if updates are infrequent enough. It is easy to reason about, having the same semantics
 as familiar rwlocks.
 
 #### lockmgr
