@@ -115,7 +115,8 @@ mechanisms from per the per-cpu cache.
 Oversharing is a specific manifestation of coarse locking granularity.
 This is when a (typically) global lock is used to serialize access
 to a resource that is global that does not need to be. An example of
-this can be found in the logging of records by hwpmc in 11 vs 12. In
+this can be found in the logging of records by hwpmc (in-kernel support
+for hardware performance monitoring counters) in 11 vs 12. In
 11 all cpus log their respective samples to a single global buffer that
 is protected by a global spin lock. On 12, each CPU has its own logging
 buffer - thus requiring no locking to prevent corrupt updates, only the
