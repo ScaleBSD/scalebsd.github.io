@@ -160,11 +160,11 @@ quickly becomes a bottleneck. There are 2 separate issues to unpack here:
 - Can anything be done to make reference counting cheaper?
 
 Interestingly enough, for stack local references, reference counting isn't actually
-necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation,
-Hazard Pointers etc can allow us to provide existence guarantees without any shared
+necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation \[Fraser04\],
+Hazard Pointers \[Michael04\] etc can allow us to provide existence guarantees without any shared
 memory modifications. And reference counting can, in many cases, be made much cheaper.
 
-Recent work in UDP to expand the scope of objects tied to the network stack's epoch 
+Recent work in UDP to expand the scope of objects tied to the network stack's epoch
 structure is now also used to guarantee existence of interface addresses. This now 
 means that references to them that are stack local, where a reference was previously
 acquired at entry and released before return, now no longer need to update the object's
