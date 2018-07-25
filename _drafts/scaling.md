@@ -304,8 +304,8 @@ is in an epoch section. Executing `do_stuff()` in an epoch section looks somethi
  epoch_exit(global_epoch);
 ``` 
 A thread deleting an object referenced within an epoch section can either synchronously wait for all threads in an
-epoch section during the current epoch plus a grace period by calling `epoch_wait(epoch);`. Or it can enqueue the 
-object to be freed at a later time using `epoch_call(epoch, context, callback);`.
+epoch section during the current epoch plus a grace period by calling `epoch_wait(epoch)`. Or it can enqueue the 
+object to be freed at a later time using `epoch_call(epoch, context, callback)`.
 allowing a service thread to confirm - at lower cost than a synchronous operation - that a grace period has elapsed.
 In many respects the read side of epoch has similar characteristics to the read side of an rmlock. However, it does 
 not provide a mutual exclusion guarantee. Modifications to an epoch protected data structure can proceed in parallel
