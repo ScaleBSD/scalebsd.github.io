@@ -80,7 +80,7 @@ becoming an increasingly leaky abstraction. Cache coherence logic in processors
 provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
 all accustomed to \[Sorin11\]. However, at its limit, the observed performance is defined by the
 actual implementation of a distributed memory with all updates performed by message 
-passing. Performance being dictated by the message latency and bandwidth of this
+passing \[Hacken09\], \[Molka15\]. Performance being dictated by the message latency and bandwidth of this
 machinery.
 
 
@@ -342,7 +342,9 @@ Morgan Kaufman, 1999
 \[Ellen07\] F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
 
 \[Fraser04\] Fraser, K. Practical lock-freedom, Ph.D. Thesis, University of Cambridge Computer Laboratory, 2004
- 
+
+\[Hacken09\] D. Hackenberg,  D. Molka,  and W. Nagel.   Comparing cache architectures and coherency protocols on x86-64 multicore SMP systems.  MICRO 2009, pages 413–422.
+
 \[Hart07\] Hart, T. E., McKenney, P. E., Demke Brown, A., Walpole, J. 2007. Performance of memory reclamation for lockless synchronization. Journal of Parallel and Distributed Computing 67(12): 1270-1285; 
 http://dx.doi.org/10.1016/j.jpdc.2007.04.010
 
@@ -353,6 +355,10 @@ https://www.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html
  
 \[Michael04\] Michael, M. M. Hazard pointers: safe memory reclamation for lock-free
 objects, IEEE Trans. Parallel Distrib. Syst. 15 (6) (2004) 491–504.
+
+\[Molka15\] Daniel Molka, Daniel Hackenberg, Robert Schöne, and Wolfgang E Nagel. 2015.
+Cache Coherence Protocol and Memory Performance of the Intel Haswell-EP
+Architecture. In Parallel Processing (ICPP), 2015 44th International Conference on.IEEE, 739–748.
 
 \[Sorin11\] D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
   
