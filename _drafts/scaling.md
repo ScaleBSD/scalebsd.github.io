@@ -9,11 +9,12 @@ commodity curve. As the definition of "commodity" moves, FreeBSD needs to
 keep pace to maintain its relevance in the server space.
 
 Scalability can be defined on a number of axes: 
- - work constant (WC) - the amount of work done per processor remains constant
- - memory constant (MC) - the data set size per processor remains constant
- - time constant (TC) - the time to execute a given workload remains constant
+ - Problem-Constrained `PC` - The user wants to use a larger machine to solve the same problem faster. 
+ - Time-Constrained `TC` - the time to execute a given workload remains constant, 
+   user wants to solve the larges problem possible.
+ - Memory-Constrained `MC` - The user wanst to solve the largest problem that will fit in memory.
  
-`WC` roughly translates to what is defined as `strong scaling` as the number of
+`PC` roughly translates to what is defined as `strong scaling` as the number of
 processors available to complete a task increases the extent to which the time
 to complete the task decreases. `TC` is equivalent to `weak scaling` - the degree
 to which the amount of work accomplished increases as the number of processors 
