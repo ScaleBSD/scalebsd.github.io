@@ -10,10 +10,14 @@ keep pace to maintain its relevance in the server space.
 
 Scalability can be defined on a number of axes: 
  - Problem-Constrained `PC` - The user wants to use a larger machine to solve the same problem faster.
- `Speedup(n processors) = Time(1 processor) / Time(n processors)`
+   ```
+   Speedup(n processors) = Time(1 processor) / Time(n processors)
+   ```
  - Time-Constrained `TC` - the time to execute a given workload remains constant, 
    user wants to solve the larges problem possible.
-   ` Speedup(n processors) = Work(n processors) / Work(1 processor)`
+   ```
+   Speedup(n processors) = Work(n processors) / Work(1 processor)
+   ```
  - Memory-Constrained `MC` - The user wanst to solve the largest problem that will fit in memory.
    ```
    Speedup(n processors) = Work(n processors) / Time(n processors) * Time(1 processor) / Work(1 processor =  
