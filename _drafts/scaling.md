@@ -8,7 +8,7 @@ dual socket system. FreeBSD has always existed at the "knee" of the hardware
 commodity curve. As the definition of "commodity" moves, FreeBSD needs to 
 keep pace to maintain its relevance in the server space.
 
-Scalability can be defined on a number of axes: 
+Scalability can be defined on a number of axes \[Culler99\]: 
  - Problem-Constrained `PC` - The user wants to use a larger machine to solve the same problem faster.
    ```
    Speedup(n processors) = Time(1 processor) / Time(n processors)
