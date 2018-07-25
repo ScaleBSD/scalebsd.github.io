@@ -1,4 +1,4 @@
-FreeBSD and Processor Trends
+# FreeBSD and Processor Trends
 
 As we approach 2019 and commodity core counts continue to rise it's worth
 looking in to how well FreeBSD can take advantage of larger core count and
