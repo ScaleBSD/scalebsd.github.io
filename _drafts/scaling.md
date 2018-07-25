@@ -9,7 +9,7 @@ commodity curve. As the definition of "commodity" moves, FreeBSD needs to
 keep pace to maintain its relevance in the server space.
 
 Scalability can be defined on a number of axes: 
- - Problem-Constrained `PC` - The user wants to use a larger machine to solve the same problem faster.
+ - Problem-Constrained `PC` - The user wants to use a larger machineide to solve the same problem faster.
    ```
    Speedup(n processors) = Time(1 processor) / Time(n processors)
    ```
@@ -23,12 +23,12 @@ Scalability can be defined on a number of axes:
    Speedup(n processors) = Work(n processors) / Time(n processors) * Time(1 processor) / Work(1 processor =  
    Increase In Work / Increase in Execution Time
    ```
-`PC` roughly translates to what is defined as `strong scaling` as the number of
+`PC` roughly translates to what is defined as `strong scaling` - as the number of
 processors available to complete a task increases the extent to which the time
 to complete the task decreases. `TC` is equivalent to `weak scaling` - the degree
 to which the amount of work accomplished increases as the number of processors 
-increases. For the purposes of this article scaling will be `weak scaling` as 
-we will be defining scalability by the aggregate number of operations performed
+increases. For the purposes of this article, when we refer to scaling will be speaking of `weak scaling`. 
+Scalability will be measured by the aggregate number of operations performed
 during benchmarks. In general, extrapolating from these scalability measurements
 to actual application performance is fraught with pitfalls as
 performance bottlenecks are application and workload specific. Nonetheless,
@@ -76,7 +76,7 @@ The first two scaling challenges, memory latency and the bounds on coherency tra
 are fundamental to the evolution of computer hardware over the last decade as the 
 design artifacts formerly only seen in high end systems make their way even in to
 consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
-becoming an increasingly leaky abstraction. Cache coherence logic in the processors
+becoming an increasingly leaky abstraction. Cache coherence logic in processors
 provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
 all accustomed to. However, at its limit, the observed performance is defined by the
 actual implementation of a distributed memory with all updates performed by message 
