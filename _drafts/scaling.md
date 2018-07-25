@@ -78,7 +78,7 @@ design artifacts formerly only seen in high end systems make their way even in t
 consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
 becoming an increasingly leaky abstraction. Cache coherence logic in processors
 provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
-all accustomed to. However, at its limit, the observed performance is defined by the
+all accustomed to \[Sorin11\]. However, at its limit, the observed performance is defined by the
 actual implementation of a distributed memory with all updates performed by message 
 passing. Performance being dictated by the message latency and bandwidth of this
 machinery.
