@@ -64,7 +64,7 @@ To a large degree the scaling solutions are all a combination of:
 
 The first two scaling challenges, memory latency and the bounds on coherency traffic,
 are fundamental to the evolution of computer hardware over the last decade as the 
-design artifacts formerly only seen in high end systems make there way even in to
+design artifacts formerly only seen in high end systems make their way even in to
 consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
 becoming an increasingly leaky abstraction. Cache coherence logic in the processors
 provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
