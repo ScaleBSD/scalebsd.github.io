@@ -142,7 +142,7 @@ acquired lookup now checks that the connection has not had the `INP_FREED`
 flag set. If the flag is set it indicates that connection is pending free
 and so we drop the lock and return NULL as if no connection had been found.
 This change adds some additional complexity to readers, but in exchange we
-no longer require a global atomic for the rwlock [explain this to the reader]
+no longer require a global atomic for the rwlock \[App. A\]
 and updates can proceed in parallel with lookups (lookups no longer block
 on updates and vice versa). This change provided a 10-20x reduction in time
 spent in lookups on a loaded multi-socket server.
@@ -161,7 +161,7 @@ quickly becomes a bottleneck. There are 2 separate issues to unpack here:
 
 Interestingly enough, for stack local references, reference counting isn't actually
 necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation \[Fraser04\],
-Hazard Pointers \[Michael04\] etc can allow us to provide existence guarantees without any shared
+Hazard Pointers \[Michael04\] \[Hart06\] etc can allow us to provide existence guarantees without any shared
 memory modifications. And reference counting can, in many cases, be made much cheaper.
 
 Recent work in UDP to expand the scope of objects tied to the network stack's epoch
@@ -172,9 +172,9 @@ refcount any more.
 
 The different approaches to scalable reference counting rely on the insight that the
 observed reference count can safely be different from the "true" reference count if 
-we can safely handle zero detection correctly. Although there are many approaches to
-this in the literature [...], the ones I consider most interesting are Linux's percpu 
-refcount and Refcache. The former is a per-cpu counter that degrades to a traditional
+we can safely handle zero detection correctly. Although there are other approaches to
+this in the literature \[Ellen07\], the ones I consider most interesting are Linux's percpu 
+refcount \[Corbet13\] and Refcache \[Clem13\]. The former is a per-cpu counter that degrades to a traditional
 atomically updated reference count when the initial reference holder "kills" the perpcpu
 refcount. This is simple and, if the life cycle of the object closely mirrors that of the
 initial reference holder, can be extremely lightweight. It does not work well if the
@@ -327,6 +327,8 @@ http://doi.acm.org/10.1145/1926385.1926442
 \[Boyd10\] S. Boyd-Wickizer, A. T. Clements, Y. Mao, A. Pesterev, M. F. Kaashoek, R. Morris, and N. Zeldovich. An analysis of Linux scalability to many cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI), Vancouver, Canada, Oct. 2010.
 
 \[Corbet10\] Corbet, J. The search for fast, scalable counters, May 2010. http://lwn.net/Articles/170003/.
+
+\[Corbet13\] Corbet, J.Per-CPU reference counts, July 2013. https://lwn.net/Articles/557478/
 
 \[Clem13\] Clements,  A. T., M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable address spaces for multithreaded applications. In
 Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
