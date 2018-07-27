@@ -3,7 +3,7 @@
 As we approach 2019 and commodity core counts continue to rise it's worth
 looking in to how well FreeBSD can take advantage of larger core count and
 multi-socket systems. The ThreadRipper 2 will make 32-core (64 threads) systems
-commodity and EPYC2 will make it possible to have 128 cores (256 threads) in a
+commodity and it is rumored that EPYC2 will make it possible to have 128 cores (256 threads) in a
 dual socket system. FreeBSD has always existed at the "knee" of the hardware 
 commodity curve. As the definition of "commodity" moves, FreeBSD needs to 
 keep pace to maintain its relevance in the server space.
