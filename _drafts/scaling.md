@@ -90,7 +90,7 @@ order is:
   - poor cache locality between L3 caches
     or NUMA domains
 
-Locking granularity is in essence the relative size of the scope 
+In essence, locking granularity is the relative size of the scope 
 that a single lock protects. The most coarse grained was a single
 lock serializing all access to the kernel "Big Kernel Lock" or 
 "BKL" in Linux or "Giant" in FreeBSD. This was gradually improved to
