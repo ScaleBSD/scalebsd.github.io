@@ -95,10 +95,9 @@ that a single lock protects. The most coarse grained was a single
 lock serializing all access to the kernel "Big Kernel Lock" or 
 "BKL" in Linux or "Giant" in FreeBSD. This was gradually improved to
 locking individual subsystems, then individual data structures, then 
-fields in data structures. Even with fine grained locking, not infrequently
-do we run in to the case of a widely referenced 
+fields in data structures. Even with fine grained locking, we frequently run in to the case of a widely referenced 
 global resource (memory, routing table entry, etc) that can only be
-accessed one at a time. Early on in SMP efforts this can easily be
+accessed by one thread at a time. Early on in SMP efforts this could easily be
 addressed by moving from serializing all work in a subsystem (e.g.
 networking) to locking individual sockets or in memory allocation
 by periodically allocating in bulk to individual per-cpu caches where
