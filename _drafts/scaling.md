@@ -102,10 +102,10 @@ this can be found in the logging of records by hwpmc (in-kernel support
 for hardware performance monitoring counters) in 11 vs 12. In
 11 all cpus log their respective samples to a single global buffer that
 is protected by a global spin lock. On 12, each CPU has its own logging
-buffer - thus requiring no locking to prevent corrupt updates, only the
-disabling of interrupts to protect against preemption by another thread or
-interruption by the timer interrupt which copies samples recorded by pmc's 
-NMI interrupts.
+buffer. The only serialization required is disabling interrupts to prevent 
+preemption by another thread or the timer interrupt responsible for copying
+samples. This change completely eliminated contention related overhead during
+sampling.
 
 ### Locking for existence guarantees
 One can use a lock to guarantee that
