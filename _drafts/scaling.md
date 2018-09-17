@@ -1,35 +1,30 @@
 # FreeBSD and Processor Trends
 
-As we approach 2019 and commodity core counts continue to rise it's worth
-looking in to how well FreeBSD can take advantage of larger core count and
-multi-socket systems. The ThreadRipper 2 will make 32-core (64 threads) systems
-commodity and it is rumored that EPYC2 will make it possible to have 128 cores (256 threads) in a
+
+
+Approaching 2019 commodity core counts have continued to rise. For FreeBSD users and developers it's worth
+looking in to how well FreeBSD can profit from this trend. The ThreadRipper 2 has rendered 32-core (64 threads) systems
+commodity. According to rumors EPYC2 will enable one to have 128 cores (256 threads) in a
 dual socket system. FreeBSD has always existed at the "knee" of the hardware 
 commodity curve. As the definition of "commodity" moves, FreeBSD needs to 
 keep pace to maintain its relevance in the server space.
 
 Scalability can be defined on a number of axes \[Culler99\]: 
- - Problem-Constrained `PC` - The user wants to use a larger machine to solve the same problem faster.
+ - Problem-Constrained `strong scaling` - The user wants to use a larger machine to solve the same problem faster. As the number of processors available to complete a task increases, the extent to which the time complete the problem decreases:
    ```
    Speedup(n processors) = Time(1 processor) / Time(n processors)
    ```
- - Time-Constrained `TC` - the time to execute a given workload remains constant, 
-   user wants to solve the larges problem possible.
+ - Time-Constrained `weak scaling` - the time to execute a given workload remains constant, 
+   user wants to solve the largest problem possible. This is the class of scaling this article will focus on. Here it will be characterized by the aggregate number of operations performed during benchmarks. It is the degree to which the amount of work accomplished increases as the number of processors increases:
    ```
    Speedup(n processors) = Work(n processors) / Work(1 processor)
    ```
- - Memory-Constrained `MC` - The user wanst to solve the largest problem that will fit in memory.
+- Memory-Constrained  - The user wanst to solve the largest problem that will fit in memory.
    ```
    Speedup(n processors) = Work(n processors) / Time(n processors) * Time(1 processor) / Work(1 processor =  
    Increase In Work / Increase in Execution Time
    ```
-`PC` roughly translates to what is defined as `strong scaling` - as the number of
-processors available to complete a task increases the extent to which the time
-to complete the task decreases. `TC` is equivalent to `weak scaling` - the degree
-to which the amount of work accomplished increases as the number of processors 
-increases. For the purposes of this article, when we refer to scaling will be speaking of `weak scaling`. 
-Scalability will be measured by the aggregate number of operations performed
-during benchmarks. In general, extrapolating from these scalability measurements
+ In general, extrapolating from these scalability measurements
 to actual application performance is fraught with pitfalls as
 performance bottlenecks are application and workload specific. Nonetheless,
 the OS impact on any given workload can be chracterized as a combination
@@ -38,14 +33,13 @@ performance and scaling of the former can easily be characterized through
 microbenchmarks. The latter can measured to a lesser degree by measuring
 the impact of scheduling decisions on simple workloads.
 
-In this article I'll talk a little bit about what makes scaling difficult
-and what some of the approaches are for addressing the issues we face. I'll
-then compare FreeBSD 11.1 with recent -CURRENT to show where we've made
+<!-- I'll then compare FreeBSD 11.1 with recent -CURRENT to show where we've made
 progress over the last year and then compare the latter with performance
 of the latest CentOS and Linux releases to show where the gaps are. I'll
 conclude by talking a little bit about what work needs to be done where
-to bridge the gaps.
+to bridge the gaps. -->
 
+## What Makes Scaling Difficult
 From 50,000 feet there are two factors that define scaling: serialization and
 scheduling. Ignoring the overhead of locking primitives themselves, serialization
 overhead can roughly be defined as reducing throughput from 1 to 1/n where n 
@@ -73,15 +67,14 @@ To a large degree the scaling solutions are all a combination of:
  - distinguishing between existence guarantees and mutual exclusion
 
 The first two scaling challenges, memory latency and the bounds on coherency traffic,
-are fundamental to the evolution of computer hardware over the last decade as the 
-design artifacts formerly only seen in high end systems make their way even in to
+are fundamental to the evolution of computer hardware over the last decade. What were 
+once design artifacts seen only in high end systems are now an important consideration even in
 consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
 becoming an increasingly leaky abstraction. Cache coherence logic in processors
 provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
 all accustomed to \[Sorin11\]. However, at its limit, the observed performance is defined by the
 actual implementation of a distributed memory with all updates performed by message 
-passing \[Hacken09\], \[Molka15\]. Performance being dictated by the message latency and bandwidth of this
-machinery.
+passing \[Hacken09\], \[Molka15\]. Today, message latency and bandwidth are dominant factors in observed performance.
 
 
 
