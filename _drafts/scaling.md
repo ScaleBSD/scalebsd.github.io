@@ -97,12 +97,9 @@ lock serializing all access to the kernel "Big Kernel Lock" or
 locking individual subsystems, then individual data structures, then 
 fields in data structures. Even with fine grained locking, we frequently run in to the case of a widely referenced 
 global resource (memory, routing table entry, etc) that can only be
-accessed by one thread at a time. Early on in SMP efforts this could easily be
+accessed by one thread at a time. Early on in SMP efforts lock contention could easily be
 addressed by moving from serializing all work in a subsystem (e.g.
-networking) to locking individual sockets or in memory allocation
-by periodically allocating in bulk to individual per-cpu caches where
-the majority of allocations can be satisfied by lighter weight
-mechanisms from per the per-cpu cache.
+networking) to locking individual resources (e.g. sockets).
 
 Oversharing is a specific manifestation of coarse locking granularity.
 This is when a (typically) global lock is used to serialize access
