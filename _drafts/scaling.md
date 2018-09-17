@@ -33,11 +33,6 @@ performance and scaling of the former can easily be characterized through
 microbenchmarks. The latter can measured to a lesser degree by measuring
 the impact of scheduling decisions on simple workloads.
 
-<!-- I'll then compare FreeBSD 11.1 with recent -CURRENT to show where we've made
-progress over the last year and then compare the latter with performance
-of the latest CentOS and Linux releases to show where the gaps are. I'll
-conclude by talking a little bit about what work needs to be done where
-to bridge the gaps. -->
 
 ## What Makes Scaling Difficult
 From 50,000 feet there are two factors that define scaling: serialization and
@@ -82,14 +77,11 @@ passing \[Hacken09\], \[Molka15\]. Today, message latency and bandwidth are domi
 
 One generally progresses through distinct levels as one increases the
 number of hardware threads that one is trying to exploit. Generally the
-order is:
-  - locking granularity
-  - oversharing
-  - using locks to provide existence guarantees
-  - using atomic references to provide existence guarantees
-  - poor cache locality between L3 caches
-    or NUMA domains
+order is: locking granularity, oversharing, using locks to provide existence guarantees, 
+using atomic references to provide existence guarantees, poor cache locality between L3 caches
+or NUMA domains.
 
+### Locking Granularity
 In essence, locking granularity is the relative size of the scope 
 that a single lock protects. The most coarse grained was a single
 lock serializing all access to the kernel "Big Kernel Lock" or 
@@ -99,8 +91,10 @@ fields in data structures. Even with fine grained locking, we frequently run in 
 global resource (memory, routing table entry, etc) that can only be
 accessed by one thread at a time. Early on in SMP efforts lock contention could easily be
 addressed by moving from serializing all work in a subsystem (e.g.
-networking) to locking individual resources (e.g. sockets).
+networking) to locking individual resources (e.g. sockets). In general, locking granularity in FreeBSD is already
+relatively fine grained.
 
+### Oversharing
 Oversharing is a specific manifestation of coarse locking granularity.
 This is when a (typically) global lock is used to serialize access
 to a resource that is global that does not need to be. An example of
@@ -113,7 +107,7 @@ disabling of interrupts to protect against preemption by another thread or
 interruption by the timer interrupt which copies samples recorded by pmc's 
 NMI interrupts.
 
-
+### Locking for existence guarantees
 One can use a lock to guarantee that
 entries in a system global or process global structure has not been freed while
 a thread is referencing a table entry. One example in 11.x vs 12.x is how
@@ -137,6 +131,7 @@ and updates can proceed in parallel with lookups (lookups no longer block
 on updates and vice versa). This change provided a 10-20x reduction in time
 spent in lookups on a loaded multi-socket server.
 
+### Atomic refcounts for existence guarantees
 A more performant alternative to using locks for guaranteeing existence - but
 still one that nonetheless does not scale to multiple coherency domains - is
 atomically updating a reference counter for the object. Each new thread or
@@ -180,6 +175,7 @@ substantial overhead to the zero detection process and the latency between initi
 for free and final release makes it unsuitable for objects with a high rate of turnover. 
 A 10 ms backlog of network mbufs or VM page structures could incur punitive overhead.
 
+### Cache Locality
 Last on this list of notable scaling anti-patterns is poor cache locality. This can be as
 simple as packing structures contiguously (as opposed to a linked list) so that the prefetcher 
 can furnish the next element as a thread iterates through them. However, at high operation 
@@ -223,12 +219,21 @@ Following that we'll be looking at somewhat more real world workloads whose perf
 in part by parallelism in the kernel: the nginx web server serving small static objects, memcached,
 and PostgreSQL.
 
+<!-- I'll then compare FreeBSD 11.1 with recent -CURRENT to show where we've made
+progress over the last year and then compare the latter with performance
+of the latest CentOS and Linux releases to show where the gaps are. I'll
+conclude by talking a little bit about what work needs to be done where
+to bridge the gaps. -->
+
+
 We start with 11.1 as it is the latest release that does not have any of the recent VM scalability work
 to it. Thus making it a good baseline to measure any progress against.Benchmarking on `-CURRENT`, the 
 development branch will show the scalability improvements over the last year or so. CentOS 7.4 is 
 representative of what the typical Linux deployment sees and kind of sets a minimum threshold for where
 FreeBSD needs to be. Then last we look at Linux 4.18 - the latest Linux release to provide ceteris paribus
 measurements against the Linux equivalent of the FreeBSD development branch.
+
+
 
 
 ## Appendix A - FreeBSD Serialization Primitives
