@@ -19,12 +19,12 @@ Scalability can be defined on a number of axes \[Culler99\]:
    ```
    Speedup(n processors) = Work(n processors) / Work(1 processor)
    ```
-- Memory-Constrained  - The user wanst to solve the largest problem that will fit in memory.
+- Memory-Constrained  - The user wants to solve the largest problem that will fit in memory.
    ```
    Speedup(n processors) = Work(n processors) / Time(n processors) * Time(1 processor) / Work(1 processor =  
    Increase In Work / Increase in Execution Time
    ```
- In general, extrapolating from these scalability measurements
+In general, extrapolating from these scalability measurements
 to actual application performance is fraught with pitfalls as
 performance bottlenecks are application and workload specific. Nonetheless,
 the OS impact on any given workload can be chracterized as a combination
@@ -33,6 +33,11 @@ performance and scaling of the former can easily be characterized through
 microbenchmarks. The latter can measured to a lesser degree by measuring
 the impact of scheduling decisions on simple workloads.
 
+It is important for the reader to understand that the purpose
+of microbenchmarks here is not to measure workloads themselves, but to zoom in 
+on individual OS services to see how well they scale in isolation.These measurements
+are only predictive of performance on real world workloads to the extent to which 
+a workload uses the individual service being measured.
 
 ## What Makes Scaling Difficult
 From 50,000 feet there are two factors that define scaling: serialization and
