@@ -36,18 +36,18 @@ of microbenchmarks is not to measure workloads themselves. They are a means to o
 
 
 
-## What Makes Scaling Difficult
-From 50,000 feet there are two factors that define scaling: serialization and
-scheduling. Ignoring the overhead of locking primitives themselves, serialization
-overhead can roughly be defined as reducing throughput from 1 to 1/n where n 
-is the number of threads waiting to acquire a lock. Scheduling overhead is more 
-difficult to define. In an ideal world a given thread would only ever run on one 
+## What Makes Scaling Difficult -- Serialization and Scheduling
+If _n_ threads are attempting to perform an operation,  `serialization overhead` 
+can roughly be defined as the extent to which the throughput per thread 
+declines from 1 to 1/_n_, as each thread waits to acquire the same lock. 
+`Scheduling overhead` is more difficult to define. In an ideal world a given 
+thread would only ever run on one 
 core, any other threads that it communicated with would be on the same "core 
 complex" - sharing an L3 cache so that IPIs (inter processor interrupts - a 
 facility to allow a cpu to interrupt other cpus) and cache coherency traffic would 
 not have to traverse an interconnect and any misses could be refilled without going
-to memory. In practice this is impossible in the general case as CPUs are commonly
-oversubscribed and the scheduler cannot infer relationships between threads in
+to memory. Unfortunately, in practice, this is impossible in the general case. 
+CPUs are commonly oversubscribed and the scheduler cannot infer relationships between threads in
 different processes. The further away one cpu is from another the poorer the
 performance for latency sensitive operations such as networking and synchronous IPC.
 And the larger the distance between two cpus, the greater cost of refilling the
@@ -63,7 +63,7 @@ To a large degree the scaling solutions are all a combination of:
  - relaxing constraints
  - distinguishing between existence guarantees and mutual exclusion
 
-The first two scaling challenges, memory latency and the bounds on coherency traffic,
+Memory latency and the bounds on coherency traffic,
 are fundamental to the evolution of computer hardware over the last decade. What were 
 once design artifacts seen only in high end systems are now an important consideration even in
 consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
@@ -73,41 +73,17 @@ all accustomed to \[Sorin11\]. However, at its limit, the observed performance i
 actual implementation of a distributed memory with all updates performed by message 
 passing \[Hacken09\], \[Molka15\]. Today, message latency and bandwidth are dominant factors in observed performance.
 
+Implementation issues impacted by the increasing number of hardware threads:
+- Locking granularity
+- Using locks to provide existence guarantees
+- Using atomic references to provide existence guarantees 
+- Poor cache locality between L3 caches or NUMA domains.
 
-
-
-
-One generally progresses through distinct levels as one increases the
-number of hardware threads that one is trying to exploit. Generally the
-order is: locking granularity, oversharing, using locks to provide existence guarantees, 
-using atomic references to provide existence guarantees, poor cache locality between L3 caches
-or NUMA domains.
 
 ### Locking Granularity
-In essence, locking granularity is the relative size of the scope 
-that a single lock protects. The most coarse grained was a single
-lock serializing all access to the kernel "Big Kernel Lock" or 
-"BKL" in Linux or "Giant" in FreeBSD. This was gradually improved to
-locking individual subsystems, then individual data structures, then 
-fields in data structures. Even with fine grained locking, we frequently run in to the case of a widely referenced 
-global resource (memory, routing table entry, etc) that can only be
-accessed by one thread at a time. Early on in SMP efforts lock contention could easily be
-addressed by moving from serializing all work in a subsystem (e.g.
-networking) to locking individual resources (e.g. sockets). In general, locking granularity in FreeBSD is already
-relatively fine grained.
+Locking granularity refers to how many operations are protected by a single lock.
+The “Big Kernel Lock” or “BKL” in Linux or “Giant” in FreeBSD initially encompassed the entire kernel in a single lock. This evolved into locks for individual subsystems, then individual data structures, and finally fields in data structures. Even with fine grained locking, the case of a widely referenced global resource (memory, routing table entry, etc) that can only be accessed one at a time occurs. In general, locking granularity in FreeBSD is already relatively fine grained. Nonetheless, between FreeBSD 11 and FreeBSD 12 there are numerous examples of work done to reduce lock contention, either by increasing locking granularity, moving to per-cpu resuources, or reducing the frequency with which global updates occur.
 
-### Oversharing
-Oversharing is a specific manifestation of coarse locking granularity.
-This is when a (typically) global lock is used to serialize access
-to a resource that is global that does not need to be. An example of
-this can be found in the logging of records by hwpmc (in-kernel support
-for hardware performance monitoring counters) in 11 vs 12. In
-11 all cpus log their respective samples to a single global buffer that
-is protected by a global spin lock. On 12, each CPU has its own logging
-buffer. The only serialization required is disabling interrupts to prevent 
-preemption by another thread or the timer interrupt responsible for copying
-samples. This change completely eliminated contention related overhead during
-sampling.
 
 ### Locking for existence guarantees
 One can use a lock to guarantee that
