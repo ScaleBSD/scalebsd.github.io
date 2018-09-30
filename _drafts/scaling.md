@@ -174,13 +174,31 @@ the choices that the scheduler has available to it.
 
 
 ## Measuring Scalability
-As our first step on a whirlwind tour of measuring scalability we'll run the "will-it-scale" set of
+For purposes of this article scaling measurements will be limited to running the
+"Will-it-scale" system call microbenchmark suite on FreeBSD 11, FreeBSD 12 and
+Ubuntu 18 (Linux-4.15.1) on two systems a dual socket EPYC 7601 (2x32 cores @2.2Ghz)
+and a dual socket Intel Xeon 6130 (2x16 cores @2.1Ghz). The two cannot be directly
+compared as the EPYC 7601 is a top bin processor retailing for 130% more than
+than the mid-level Xeon 6130. Nonetheless, the more complex EPYC is likely to
+show very different scaling characteristics and a higher penalty for poor
+locality.
+
+                    FILL IN HERE.
+
+
+Given more time we would have provided benchmarks with more real world workloads
+such as the nginx web server serving small static objects, memcached, PostgreSQL,
+etc.
+
+
+
+<!-- As our first step on a whirlwind tour of measuring scalability we'll run the "will-it-scale" set of
 benchmarks to measure the aggregate number of operations per second. First single-threaded where
 we work our way up from a single process to one for every processor thread. And then multi-threaded
 with a single process, working it's way from one thread to a thread for every processor thread.
 Following that we'll be looking at somewhat more real world workloads whose performance is determined
 in part by parallelism in the kernel: the nginx web server serving small static objects, memcached,
-and PostgreSQL.
+and PostgreSQL. -->
 
 <!-- I'll then compare FreeBSD 11.1 with recent -CURRENT to show where we've made
 progress over the last year and then compare the latter with performance
@@ -188,13 +206,6 @@ of the latest CentOS and Linux releases to show where the gaps are. I'll
 conclude by talking a little bit about what work needs to be done where
 to bridge the gaps. -->
 
-
-We start with 11.1 as it is the latest release that does not have any of the recent VM scalability work
-to it. Thus making it a good baseline to measure any progress against.Benchmarking on `-CURRENT`, the 
-development branch will show the scalability improvements over the last year or so. CentOS 7.4 is 
-representative of what the typical Linux deployment sees and kind of sets a minimum threshold for where
-FreeBSD needs to be. Then last we look at Linux 4.18 - the latest Linux release to provide ceteris paribus
-measurements against the Linux equivalent of the FreeBSD development branch.
 
 ## Alternative Approaches
 Where do we go from here? Benchmarks can identify how well a system performs
@@ -219,14 +230,14 @@ interfaces are: fork (when immediately followed by exec), stat, sigpending, and 
 
 This is an interesting observation, but the real contribution of the work is developing a
 tool called _COMMUTER_ which:
- 1) takes a symbolic model of an interface and computes precise conditions  for  when  
-     that  interface’s  operations  commute.  
+ 1) takes a symbolic model of an interface and computes precise conditions  for when  
+     that  interface’s operations commute.  
  2) uses these conditions to generate concrete tests of sets of operations that commute 
-     according to the  interface  model,  and  thus  should  have  a  conflict-free  
-     implementation  according  to  the  commutativity  rule. 
- 3) checks  whether  a  particular  implementation  is  conflict-free for each test case. 
+     according to the interface  model, and thus should have a conflict-free  
+     implementation according to the commutativity rule. 
+ 3) checks whether a particular implementation is conflict-free for each test case. 
 
-He applied this to 18 POSIX system calls to generate 26, 238 test cases and used 
+He applied this to 18 POSIX system calls to generate 26,238 test cases and used 
 these to compare Linux with sv6, a research OS developed by his group. He found that
 on Linux 17,206 cases scale vs 26,115 on sv6. The collection of test cases that failed 
 to scale can be used as a starting point for redesigning subsystems just as the 
