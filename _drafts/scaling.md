@@ -86,107 +86,92 @@ The “Big Kernel Lock” or “BKL” in Linux or “Giant” in FreeBSD initia
 
 
 ### Locking for existence guarantees
-One can use a lock to guarantee that
-entries in a system global or process global structure has not been freed while
-a thread is referencing a table entry. One example in 11.x vs 12.x is how
-existence is guaranteed for connection state within the per protocol hash
-table. On 11.x a thread is guaranteed that any connection found in the
-table is a valid connection by requiring that all table readers do a
-shared (for read) acquisition of a per-table reader/writer lock. This
-allowed multiple simultaneous readers while preventing any table updates.
-This was straightforward to reason about, but it is a stronger guarantee
-than is required and it comes at a substantial price. In 12.x we weakened
-the guarantee to only guaranteeing that any connection found during a
-lookup had not been freed. Lookups are protected with epoch and updates
-are serialized with a mutex. As before the lookup returns the connection
-locked to guarantee existence past lookup - but now, once the lock is
-acquired lookup now checks that the connection has not had the `INP_FREED`
-flag set. If the flag is set it indicates that connection is pending free
-and so we drop the lock and return NULL as if no connection had been found.
-This change adds some additional complexity to readers, but in exchange we
-no longer require a global atomic for the rwlock \[App. A\]
-and updates can proceed in parallel with lookups (lookups no longer block
-on updates and vice versa). This change provided a 10-20x reduction in time
-spent in lookups on a loaded multi-socket server.
+One can use a lock to guarantee that entries in a system global or process global structure have not been freed while
+in use. One example in FreeBSD 11.x vs FreeBSD 12.x is how existence is guaranteed for connection state within the per protocol hash table. FreeBSD 11.x guarantees a thread that any connection found in the table is valid by requiring that all table readers do a shared (for read) acquisition of a per-table reader/writer lock. This allowed multiple simultaneous readers while preventing any table updates.
+Although conceptually strightforward, this comes at a substantial price and the guarantee is stronger than required. FreeBSD 12.x weakens the guarantee to provide that any connection found during a lookup had not been freed. Lookups are protected with epoch and updates are serialized with a mutex. Connection state
+lookup still returns the connection locked to guarantee existence past lookup. However, once the lock is acquired lookup now checks that the connection has not had the `INP_FREED` flag set. If the flag is set, this indicated that connection is pending free. In this case, we drop the lock and return NULL as if no  connection had been found. This change adds some additional complexity to readers, but in exchange we no longer require a global atomic for the rwlock \[App. A\]
+and updates can proceed in parallel with lookups (lookups no longer block on updates and vice versa). This change provided a 10-20x reduction in time spent in lookups on a loaded multi-socket server.
+
 
 ### Atomic refcounts for existence guarantees
-A more performant alternative to using locks for guaranteeing existence - but
-still one that nonetheless does not scale to multiple coherency domains - is
-atomically updating a reference counter for the object. Each new thread or
-object holding a pointer to the object increments the reference. When the
+Atomically updating a reference counter for an object peforms better than
+the using a lock. Updates can proceed fully in parallel with ownership changes.
+Each new thread or object holding a pointer to the object increments the reference. When the
 reference is removed from the object or the thread's reference goes out of
 scope the reference is decremented. When the count goes to zero the referenced
-object is freed. For an object frequently referenced by many threads the
-coherency traffic invalidating and migrating the cache line between LLCs
-quickly becomes a bottleneck. There are 2 separate issues to unpack here: 
+object is freed. Nonetheless it does not scale as the cost of coherency traffic rises.
+For an object frequently referenced by many threads the
+coherency traffic invalidating and migrating the cache line between L2 and L3 caches
+quickly becomes a bottleneck. There are 2 separate issues to address here: 
 - Is reference counting necessary here?
 - Can anything be done to make reference counting cheaper?
 
-Interestingly enough, for stack local references, reference counting isn't actually
+Perhaps suprisingly, for stack local references, reference counting isn't actually
 necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation \[Fraser04\],
 Hazard Pointers \[Michael04\] \[Hart06\] etc can allow us to provide existence guarantees without any shared
 memory modifications. And reference counting can, in many cases, be made much cheaper.
 
 Recent work in UDP to expand the scope of objects tied to the network stack's epoch
 structure is now also used to guarantee existence of interface addresses. This now 
-means that references to them that are stack local, where a reference was previously
-acquired at entry and released before return, now no longer need to update the object's
-refcount any more.
+means that references to them that are stack local no longer need to update the object's
+refcount.
 
-The different approaches to scalable reference counting rely on the insight that the
-observed reference count can safely be different from the "true" reference count if 
-we can safely handle zero detection correctly. Although there are other approaches to
-this in the literature \[Ellen07\], the ones I consider most interesting are Linux's percpu 
-refcount \[Corbet13\] and Refcache \[Clem13\]. The former is a per-cpu counter that degrades to a traditional
-atomically updated reference count when the initial reference holder "kills" the perpcpu
-refcount. This is simple and, if the life cycle of the object closely mirrors that of the
-initial reference holder, can be extremely lightweight. It does not work well if the
-object substantially outlives the initial owner. Refcache works by maintaining a per cpu 
-cache of reference updates and then flushing them when there is conflict or at the end of 
-an "epoch" where an "epoch" is several milliseconds. Zero detection is done by putting 
-the object on a per-cpu "review" list when its global reference count reaches zero. The
-global reference count can be assumed to be the true reference count when it has remained
-at zero for two "epochs". Refcache doesn't rely on an initial reference holder with a 
-closely correlated life cycle to avoid a degraded state, making it much more general in
-some respects. However, the potentially multiple passes through the review queue can add
-substantial overhead to the zero detection process and the latency between initial candidate
-for free and final release makes it unsuitable for objects with a high rate of turnover. 
-A 10 ms backlog of network mbufs or VM page structures could incur punitive overhead.
+The observed reference count can safely be different from the "true" reference count 
+if we can safely handle zero detection correctly. The different approaches to scalable 
+reference county rely on this insight. Although there are other approaches to this in 
+the literature \[Ellen07\], the ones I consider most interesting are Linux's percpu 
+refcount \[Corbet13\] and Refcache \[Clem13\]. The former is a per-cpu counter that 
+degrades to a traditional atomically updated reference count when the initial reference 
+holder "kills" the perpcpu refcount. Its advantage is that it is simple and can be extremely 
+lightweight provided that the life cycle of the object closely mirrors that of the initial 
+reference holder. It does not work well if the object substantially outlives the initial owner. 
+Refcache maintains a per cpu cache of reference updates and flushes them when there is conflict 
+or at the end of an "epoch". In this case an "epoch" is 10 milliseconds. Zero detection is done by
+putting the object on a per-cpu "review" list when its global reference count reaches zero.
+The global reference count can be assumed to be the true reference count when it has remained
+at zero for two "epochs". Refcache doesn't rely on an initial reference holder with a closely
+correlated life cycle to avoid a degraded state. In some respects this makes it much more general.
+However, potential multiple passes through the review queue can add substantial overhead to the
+zero detection process. The latency between initial candidate for free and final release makes
+it unsuitable for objects with a high rate of turnover. For example, 10 ms backlog of network
+mbufs or VM page structures could incur punitive overhead.
 
 ### Cache Locality
-Last on this list of notable scaling anti-patterns is poor cache locality. This can be as
-simple as packing structures contiguously (as opposed to a linked list) so that the prefetcher 
-can furnish the next element as a thread iterates through them. However, at high operation 
-rates, the way in which fields are ordered within a structure can make a decisive difference
-in measured performance. A 45% increase in brk calls per second was measured when a 
-reorganization of the core memory allocation structure reduced from three to two the number 
-of cache lines for the most commonly accessed fields. Once serialization bottlenecks are 
-eliminated, kernel performance is determined by the frequency of cache misses.
+A simple example of designing for cache locality is packing structures contiguously
+as opposed to a linked list so that the prefetcher can furnish the next element as
+a thread iterates through them.  At high operation rates, the way in which fields are
+ordered within a structure can make a measurable performance difference. A 45% increase
+in brk calls per second was measured when a reorganization of the core memory allocation
+structure reduced from three to two the number of cache lines for the most commonly accessed
+fields. Once serialization bottlenecks are eliminated, kernel performance is determined by
+the frequency of cache misses.
 
-Whereas the ideals we strive for with serialization and locality are easy to define - minimal
-sharing and cache misses - optimal scheduling is essential impossible to define. One can add
-more knowledge about data structures and sharing to the scheduler, but that in turn slows 
-down scheduling decisions. Two communicating threads with a small working set will
-benefit from sharing an L2 cache, two communicating threads with a larger working set will
-be adversely impacted by sharing an L2 cache. A particularly egregious example of where FreeBSD
-falls down due to thread scheduling on multiple sockets is measured throughput on TCP
-connections to localhost. On a ~3Ghz single socket system FreeBSD can achieve 50-60Gbps, partly
+Minimal sharing and cache misses are easily definable ideals for serialization and locality.
+However, algorithmically defining optimal scheduling for an arbitrary hitherto unseen workload
+is an unrealizable ideal. Even where the information is present, data structure knowledge and 
+sharing afforded to the scheduler slows down scheduling decisions. When sharing an L2 cache, 
+two communicating threads with a small working set will benefit while two communicating threads 
+with a larger working set will be adversely impacted. A particularly egregious example of where
+FreeBSD falls down due to thread scheduling on multiple sockets is measured throughput on TCP 
+connections to localhost. On a ~3Ghz single socket system FreeBSD can achieve 50-60Gbps, partly 
 by offloading network processing to _the_ `netisr` thread. On a dual socket system of the same
-clock speed, the measured throughput drops to 18-32Gbps. The worst case is when the two 
-communicating processes are on one socket and the `netisr` thread is on the other so the 
-notification for every packet has to cross the interconnect between sockets. At least on a dual
-socket, Linux does network processing inline (i.e. no service thread) when doing TCP to localhost. 
-Thus, although it achieves lower throughput than FreeBSD does on a single socket, provided both
-processes are scheduled on the same socket it achieves a consistent 35Gbps. There are a number
-of issues to unpack here: the existence of only one netisr thread for the entire system, where the
-sender, receiver, and `netisr` thread should be scheduled, and how to convey to the scheduler that
-the three different threads are communicating with each other. Nonetheless, the key take away here
-should be that latency can determine usable bandwidth and poor scheduling decisions can have a
-devastating impact on performance when we move from single socket to dual socket.
+clock speed, the measured throughput drops to 18-32Gbps. In the worst case, two communicating
+processes are on one socket and the `netisr` thread is on the other. Therefore the 
+notification for every packet has to cross the interconnect between sockets. At least on a dual socket, 
+Linux does network processing inline (i.e. no service thread) when doing TCP to localhost. On a single 
+socket Linux would achieve lower throughput than FreeBSD does. However, it achieves a consistent
+35Gbps provided both processes are scheduled on the same socket. There are a number of issues to address here: 
+- The existence of only one netisr thread for the entire system
+- Where the sender, receiver, and `netisr` thread should be scheduled
+- How to convey to the scheduler that the three different threads are communicating with each other. 
+Nonetheless, the key insight here is that latency can determine usable bandwidth and poor
+scheduling decisions can have a devastating impact on performance when we move from single
+socket to dual socket.
 
-For users who understands in advance what workloads they will be running, the situation is manageable.
-The `cpuset` command allows one to assign processor sets to processes, restricting the choices that
-the scheduler has available to it.
+For users who understands in advance what workloads they will be running, the situation is 
+manageable. The `cpuset` command allows one to assign processor sets to processes, restricting 
+the choices that the scheduler has available to it.
+
 
 ## Measuring Scalability
 As our first step on a whirlwind tour of measuring scalability we'll run the "will-it-scale" set of
@@ -211,6 +196,43 @@ representative of what the typical Linux deployment sees and kind of sets a mini
 FreeBSD needs to be. Then last we look at Linux 4.18 - the latest Linux release to provide ceteris paribus
 measurements against the Linux equivalent of the FreeBSD development branch.
 
+## Alternative Approaches
+Where do we go from here? Benchmarks can identify how well a system performs
+but are specific to one workload and configuration. Microbenchmarks are useful 
+for identifying system bottlenecks but they're clearly too ad hoc in their coverage. 
+Is there a way to more consistently identify issues? Up until recently the answer was 
+no. However, work in 2014 by Clements [Clements, 2014] built on the notion of 
+disjoint-access-parallel memory systems [Israeli, 94] to rigorously identify 
+limitations in the scalability of both software interfaces and their implementations.
+This work proposes the _scalable commutativity rule_, which says, in essence,
+that whenever interface operations  commute, they can be implemented in a way
+that scales. The intuition behind this is simple: when operations commute, their 
+results (both the values returned and any side effects) are independent of order. 
+
+He starts by observing that many scalability problems lie not in the implementation, 
+but in the design of the software interface. An interface definition that does not 
+permit two operations to commute enforces serialization between two calls. The
+POSIX definition of the _open_ system call requires that it return the lowest available
+file descriptor. This means that two calls to open of different files need to be serialized
+on file descriptor allocation. Some other system calls that have unnecessarily unscalable 
+interfaces are: fork (when immediately followed by exec), stat, sigpending, and munmap.
+
+This is an interesting observation, but the real contribution of the work is developing a
+tool called _COMMUTER_ which:
+ 1) takes a symbolic model of an interface and computes precise conditions  for  when  
+     that  interface’s  operations  commute.  
+ 2) uses these conditions to generate concrete tests of sets of operations that commute 
+     according to the  interface  model,  and  thus  should  have  a  conflict-free  
+     implementation  according  to  the  commutativity  rule. 
+ 3) checks  whether  a  particular  implementation  is  conflict-free for each test case. 
+
+He applied this to 18 POSIX system calls to generate 26, 238 test cases and used 
+these to compare Linux with sv6, a research OS developed by his group. He found that
+on Linux 17,206 cases scale vs 26,115 on sv6. The collection of test cases that failed 
+to scale can be used as a starting point for redesigning subsystems just as the 
+will-it-scale benchmarks have enabled us to identify a much narrower set of issues.
+
+Porting COMMUTER to work with FreeBSD would be an interesting avenue for future work.
 
 
 
