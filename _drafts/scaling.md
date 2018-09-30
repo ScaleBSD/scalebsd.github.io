@@ -1,13 +1,7 @@
 # FreeBSD and Processor Trends
 
 
-
-Approaching 2019 commodity core counts have continued to rise. For FreeBSD users and developers it's worth
-looking in to how well FreeBSD can profit from this trend. The ThreadRipper 2 has rendered 32-core (64 threads) systems
-commodity. According to rumors EPYC2 will enable one to have 128 cores (256 threads) in a
-dual socket system. FreeBSD has always existed at the "knee" of the hardware 
-commodity curve. As the definition of "commodity" moves, FreeBSD needs to 
-keep pace to maintain its relevance in the server space.
+At Computex 2018, Intel unveiled a prototype 28-core system. Within a few months, AMD launched the world’s most parallel desktop processor, the ThreadRipper 2 featuring 32-core(64 hardware threads). AMD’s EPYC2 is in the lab and rumored to be 64 core (128 hardware threads) - bringing 256 hardware threads to a commodity server dual socket system. Historically, FreeBSD has existed at the "knee" of the hardware commodity curve. In order to maintain its relevance in the server space, FreeBSD needs to keep pace with the latest processor developments.
 
 Scalability can be defined on a number of axes \[Culler99\]: 
  - Problem-Constrained `strong scaling` - The user wants to use a larger machine to solve the same problem faster. As the number of processors available to complete a task increases, the extent to which the time complete the problem decreases:
@@ -15,7 +9,7 @@ Scalability can be defined on a number of axes \[Culler99\]:
    Speedup(n processors) = Time(1 processor) / Time(n processors)
    ```
  - Time-Constrained `weak scaling` - the time to execute a given workload remains constant, 
-   user wants to solve the largest problem possible. This is the class of scaling this article will focus on. Here it will be characterized by the aggregate number of operations performed during benchmarks. It is the degree to which the amount of work accomplished increases as the number of processors increases:
+   user wants to solve the largest problem possible. It is the degree to which the amount of work accomplished increases as the number of processors increases:
    ```
    Speedup(n processors) = Work(n processors) / Work(1 processor)
    ```
@@ -24,20 +18,23 @@ Scalability can be defined on a number of axes \[Culler99\]:
    Speedup(n processors) = Work(n processors) / Time(n processors) * Time(1 processor) / Work(1 processor =  
    Increase In Work / Increase in Execution Time
    ```
-In general, extrapolating from these scalability measurements
-to actual application performance is fraught with pitfalls as
-performance bottlenecks are application and workload specific. Nonetheless,
-the OS impact on any given workload can be chracterized as a combination
-of the time spent in system calls and the impact of scheduling decisions. The
-performance and scaling of the former can easily be characterized through
-microbenchmarks. The latter can measured to a lesser degree by measuring
-the impact of scheduling decisions on simple workloads.
+
+In this article, scalability refers to time-constrained scalabilty (“weak scaling”)
+which will be characterized by the aggregate number of operations performed during benchmarks.
+Performance bottlenecks are application and workload specific. Therefore it is problematic 
+to extrapolate actual application performance from these scalability measurements. 
+Nonetheless, the OS impact on any given workload can be characterized as a combination 
+of the average time per system call and the impact of scheduling decisions. System call
+overhead can be captured by simple microbenchmarks. Scheduling decisions are harder to 
+measure but one can measure them to a limited degree by measuring workloads with varying 
+scheduler restrictions (i.e. limiting the set of CPUs the scheduler can use) or by comparing
+single socket results with dual/multi socket results.
 
 It is important for the reader to understand that the purpose
-of microbenchmarks here is not to measure workloads themselves, but to zoom in 
-on individual OS services to see how well they scale in isolation.These measurements
-are only predictive of performance on real world workloads to the extent to which 
-a workload uses the individual service being measured.
+of microbenchmarks is not to measure workloads themselves. They are a means to observe the scaling of individual OS services to measure scalabilty in isolation. These measurements are only predictive of performance on real world workloads to the extent to which a workload uses the individual service being measured.
+
+
+
 
 ## What Makes Scaling Difficult
 From 50,000 feet there are two factors that define scaling: serialization and
