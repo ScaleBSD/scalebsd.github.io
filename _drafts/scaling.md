@@ -1,9 +1,9 @@
 # FreeBSD and Processor Trends
 
 
-At Computex 2018, Intel unveiled a prototype 28-core system. Within a few months, AMD launched the world’s most parallel desktop processor, the ThreadRipper 2 featuring 32-core(64 hardware threads). AMD’s EPYC2 is in the lab and rumored to be 64 core (128 hardware threads) - bringing 256 hardware threads to a commodity server dual socket system. Historically, FreeBSD has existed at the "knee" of the hardware commodity curve. In order to maintain its relevance in the server space, FreeBSD needs to keep pace with the latest processor developments.
+At Computex 2018, Intel unveiled a prototype 28-core system. Within a few months, AMD launched the world’s most parallel desktop processor, the ThreadRipper 2 featuring 32-cores (64 hardware threads). AMD’s EPYC2 is in the lab and rumored to be 64 cores (128 hardware threads) - bringing 256 hardware threads to a commodity server dual socket system. Historically, FreeBSD has existed at the "knee" of the hardware commodity curve. In order to maintain its relevance in the server space, FreeBSD needs to keep pace with the latest processor developments.
 
-Scalability can be defined on a number of axes \[Culler99\]: 
+Scalability can be defined on a number of axes \[Culler, 1999\]: 
  - Problem-Constrained `strong scaling` - The user wants to use a larger machine to solve the same problem faster. As the number of processors available to complete a task increases, the extent to which the time complete the problem decreases:
    ```
    Speedup(n processors) = Time(1 processor) / Time(n processors)
@@ -69,9 +69,9 @@ once design artifacts seen only in high end systems are now an important conside
 consumer CPUs like AMD's ThreadRipper. The shared memory programming model is 
 becoming an increasingly leaky abstraction. Cache coherence logic in processors
 provides the single-writer /multiple-reader `SWMR` guarantees that programmers are
-all accustomed to \[Sorin11\]. However, at its limit, the observed performance is defined by the
+all accustomed to \[Sorin, 2011\]. However, at its limit, the observed performance is defined by the
 actual implementation of a distributed memory with all updates performed by message 
-passing \[Hacken09\], \[Molka15\]. Today, message latency and bandwidth are dominant factors in observed performance.
+passing \[Hacken, 2009\], \[Molka, 2015\]. Today, message latency and bandwidth are dominant factors in observed performance.
 
 Implementation issues impacted by the increasing number of hardware threads:
 - Locking granularity
@@ -107,8 +107,9 @@ quickly becomes a bottleneck. There are 2 separate issues to address here:
 - Can anything be done to make reference counting cheaper?
 
 Perhaps suprisingly, for stack local references, reference counting isn't actually
-necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation \[Fraser04\],
-Hazard Pointers \[Michael04\] \[Hart06\] etc can allow us to provide existence guarantees without any shared
+necessary. SMR "Safe Memory Reclamation" techniques such as Epoch Based Reclamation [Fraser, 2004],
+Hazard Pointers [Michael, 2004], [Hart, 2006], RCU [McKenney, 2011], scalable 
+parallel sections [Wang, 2016] etc can allow us to provide existence guarantees without any shared
 memory modifications. And reference counting can, in many cases, be made much cheaper.
 
 Recent work in UDP to expand the scope of objects tied to the network stack's epoch
@@ -119,8 +120,8 @@ refcount.
 The observed reference count can safely be different from the "true" reference count 
 if we can safely handle zero detection correctly. The different approaches to scalable 
 reference county rely on this insight. Although there are other approaches to this in 
-the literature \[Ellen07\], the ones I consider most interesting are Linux's percpu 
-refcount \[Corbet13\] and Refcache \[Clem13\]. The former is a per-cpu counter that 
+the literature [Ellen, 2007], the ones I consider most interesting are Linux's percpu 
+refcount [Corbet, 2013] and Refcache [Clements, 2013]. The former is a per-cpu counter that 
 degrades to a traditional atomically updated reference count when the initial reference 
 holder "kills" the perpcpu refcount. Its advantage is that it is simple and can be extremely 
 lightweight provided that the life cycle of the object closely mirrors that of the initial 
@@ -175,7 +176,7 @@ the choices that the scheduler has available to it.
 
 ## Measuring Scalability
 For purposes of this article scaling measurements will be limited to running the
-"Will-it-scale" system call microbenchmark suite on FreeBSD 11, FreeBSD 12 and
+"Will-it-scale" system call microbenchmark suite [Blanchard, 2013] on FreeBSD 11, FreeBSD 12 and
 Ubuntu 18 (Linux-4.15.1) on two systems a dual socket EPYC 7601 (2x32 cores @2.2Ghz)
 and a dual socket Intel Xeon 6130 (2x16 cores @2.1Ghz). The two cannot be directly
 compared as the EPYC 7601 is a top bin processor retailing for 130% more than
@@ -191,25 +192,24 @@ halfway mark. This is because we move from a regime of 1 benchmark thread or pro
 per core to oversubscribing the cores and using both hardware threads.
 
 There are a number of notable improvements going from FreeBSD 11 to FreeBSD 12.The
-getuid benchmark shows that system call overhead has been reduced by more than 50%. <!-- getuid -->
-Page fault performance has improve by 20-80x. <!-- page_fault{1-3} --> FreeBSD actually
-outperforms Linux on "separate file private mapping page fault" <!-- page_fault2 BSD/Linux-->
+getuid benchmark shows that system call overhead has been reduced by more than 50%. <!-- getuid bsd11/12 intel/AMD-->
+Page fault performance has improve by 20-80x. <!-- page_fault{1-3} bsd11/bsd12 intel/amd --> 
 Anonymous memory mmap/munmap of 128MB has improved substantially and currently
-outperforms Linux. <!-- mmap1 bsd11/12/Linux --> Unix doamin socket performance has 
+outperforms Linux. <!-- mmap1 bsd11/12/Linux  AMD --> Unix doamin socket performance has 
 improved by 19x. Performance previously flattened out at eight
-hardware threads, but now continues to increase up to 128 hardware threads.<!-- unix1 -->
+hardware threads, but now continues to increase up to 128 hardware threads.<!-- unix1 bsd11/12/Linux AMD-->
 At least as of Linux 4.15 FreeBSD actually scales better than Linux on UNIX sockets.
-Separate file read still peaks at 32 hardware threads, but it's an 8x improvement. <!-- read1, readseek1 -->
+Separate file read still peaks at 32 hardware threads, but it's an 8x improvement. <!-- read1, readseek1 bsd11/12 intel/amd -->
 
 Unfortunately, there are a few areas where underinvestment shows through quite clearly.
 Although there was an improvement in the brk benchmark from changing handling of 
-swap reservations, <!-- brk1 FreeBSD11/12 --> there are several other system-wide
+swap reservations, <!-- brk1 FreeBSD11/12 intel/AMD && BSD12/Linux intel / AMD--> there are several other system-wide
 serialization points. Linux scales near linearly here, and at its peak is capable
 of performing 32x as many brk ops/s. Arguably this isn't that big a deal in practice
 due to its relative lack of prominence in real world workloads. As a class, the most 
 unsettling difference between FreeBSD and Linux is in file system operations. Linux 
 scales near linearly in many cases where FreeBSD stops scaling at 4 hardware
-threads.<!-- fstatat1, lseek1, open1, read1, -->
+threads.<!-- fstatat1, lseek1, open1, read1, bsd12/Linux intel / AMD -->
 
 
 
@@ -240,7 +240,8 @@ to bridge the gaps. -->
 ## Alternative Approaches
 Where do we go from here? Benchmarks can identify how well a system performs
 but are specific to one workload and configuration. Microbenchmarks are useful 
-for identifying system bottlenecks but they're clearly too ad hoc in their coverage. 
+for identifying system bottlenecks. However, they don't provide a way to systematically
+guarantee the absence of scaling limitations.
 Is there a way to more consistently identify issues? Up until recently the answer was 
 no. However, work in 2014 by Clements [Clements, 2014] built on the notion of 
 disjoint-access-parallel memory systems [Israeli, 94] to rigorously identify 
@@ -274,8 +275,6 @@ to scale can be used as a starting point for redesigning subsystems just as the
 will-it-scale benchmarks have enabled us to identify a much narrower set of issues.
 
 Porting COMMUTER to work with FreeBSD would be an interesting avenue for future work.
-
-
 
 ## Appendix A - FreeBSD Serialization Primitives
 
@@ -355,47 +354,47 @@ FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit'
 
 ## Bibliography
 
-\[Atti11\] Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M. M., Vechev, M. 2011. Laws of 
+\[Attiya, 2011\] Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M. M., Vechev, M. 2011. Laws of 
 order: expensive synchronization in concurrent algorithms cannot be eliminated. In Proceedings 
 of the 38th Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages: 487-498; 
 http://doi.acm.org/10.1145/1926385.1926442
 
-\[Boyd10\] S. Boyd-Wickizer, A. T. Clements, Y. Mao, A. Pesterev, M. F. Kaashoek, R. Morris, and N. Zeldovich. An analysis of Linux scalability to many cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI), Vancouver, Canada, Oct. 2010.
+[Blanchard, 2013] Will-It-Scale benchmark suite. https://github.com/ScaleBSD/will-it-scale.
 
-\[Corbet10\] Corbet, J. The search for fast, scalable counters, May 2010. http://lwn.net/Articles/170003/.
+\[Boyd, 2010\] S. Boyd-Wickizer, A. T. Clements, Y. Mao, A. Pesterev, M. F. Kaashoek, R. Morris, and N. Zeldovich. An analysis of Linux scalability to many cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI), Vancouver, Canada, Oct. 2010.
 
-\[Corbet13\] Corbet, J.Per-CPU reference counts, July 2013. https://lwn.net/Articles/557478/
+[Corbet, 2013] Corbet, J.Per-CPU reference counts, July 2013. https://lwn.net/Articles/557478/
 
-\[Clem13\] Clements,  A. T., M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable address spaces for multithreaded applications. In
+[Clements, 2013] Clements,  A. T., M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable address spaces for multithreaded applications. In
 Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
 
-\[Clem14\] Clements, A. T. The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
+[Clements, 2014] Clements, A. T. The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
 
-\[Culler99\] Culler, D. Singh, J. P., Gupta, A. Parallel Computer Architecture - A Hardware / Software Approach,
+[Culler, 1999] Culler, D. Singh, J. P., Gupta, A. Parallel Computer Architecture - A Hardware / Software Approach,
 Morgan Kaufman, 1999
 
-\[Ellen07\] F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
+[Ellen, 2007] F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
 
-\[Fraser04\] Fraser, K. Practical lock-freedom, Ph.D. Thesis, University of Cambridge Computer Laboratory, 2004
+[Fraser, 2004] Fraser, K. Practical lock-freedom, Ph.D. Thesis, University of Cambridge Computer Laboratory, 2004
 
-\[Hacken09\] D. Hackenberg,  D. Molka,  and W. Nagel.   Comparing cache architectures and coherency protocols on x86-64 multicore SMP systems.  MICRO 2009, pages 413–422.
+[Hackenberg, 2009] D. Hackenberg,  D. Molka,  and W. Nagel.   Comparing cache architectures and coherency protocols on x86-64 multicore SMP systems.  MICRO 2009, pages 413–422.
 
-\[Hart07\] Hart, T. E., McKenney, P. E., Demke Brown, A., Walpole, J. 2007. Performance of memory reclamation for lockless synchronization. Journal of Parallel and Distributed Computing 67(12): 1270-1285; 
+[Hart, 2007] Hart, T. E., McKenney, P. E., Demke Brown, A., Walpole, J. 2007. Performance of memory reclamation for lockless synchronization. Journal of Parallel and Distributed Computing 67(12): 1270-1285; 
 http://dx.doi.org/10.1016/j.jpdc.2007.04.010
 
-\[Herl08\] Herlihy, M., Shavit, N. 2008. The Art of Multiprocessor Programming. San Francisco: Morgan Kaufmann Publishers Inc. 
+[Herlihy, 2008] Herlihy, M., Shavit, N. 2008. The Art of Multiprocessor Programming. San Francisco: Morgan Kaufmann Publishers Inc. 
 
-\[McKen11\] McKenney, P. E. 2011. Is parallel programming hard, and, if so, what can you do about it? kernel.org; 
+[McKenney, 2011] McKenney, P. E. 2011. Is parallel programming hard, and, if so, what can you do about it? kernel.org; 
 https://www.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html 
  
-\[Michael04\] Michael, M. M. Hazard pointers: safe memory reclamation for lock-free
+[Michael, 2004] Michael, M. M. Hazard pointers: safe memory reclamation for lock-free
 objects, IEEE Trans. Parallel Distrib. Syst. 15 (6) (2004) 491–504.
 
-\[Molka15\] Daniel Molka, Daniel Hackenberg, Robert Schöne, and Wolfgang E Nagel. 2015.
+[Molka, 2015] Daniel Molka, Daniel Hackenberg, Robert Schöne, and Wolfgang E Nagel. 2015.
 Cache Coherence Protocol and Memory Performance of the Intel Haswell-EP
 Architecture. In Parallel Processing (ICPP), 2015 44th International Conference on.IEEE, 739–748.
 
-\[Sorin11\] D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
-  
-\[Wang16\] Q. Wang, T. Stamler, and G. Parmer, “Parallel sections: Scaling system-level data-structures,” in
+[Sorin, 2011] D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
+
+[Wang, 2016] Q. Wang, T. Stamler, and G. Parmer, “Parallel sections: Scaling system-level data-structures,” in
 Proceedings of the ACM EuroSys Conference, 2016
