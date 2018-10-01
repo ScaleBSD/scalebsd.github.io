@@ -219,13 +219,22 @@ Separate file read still peaks at 32 hardware threads, but it's an 8x improvemen
 
 Unfortunately, there are a few areas where underinvestment shows through quite clearly.
 Although there was an improvement in the brk benchmark from changing handling of 
-swap reservations, <!-- brk1 FreeBSD11/12 intel/AMD && BSD12/Linux intel / AMD--> there are several other system-wide
+swap reservations, 
+[![](/media/plots/bsd11-12/brk1.png)](/media/plots/bsd11-12/brk1.png)
+there are several other system-wide
 serialization points. Linux scales near linearly here, and at its peak is capable
-of performing 32x as many brk ops/s. Arguably this isn't that big a deal in practice
+of performing 32x as many brk ops/s.
+[![](/media/plots/bsd-linux/brk1.png)](/media/plots/bsd-linux/brk1.png)
+
+Arguably this isn't that big a deal in practice
 due to its relative lack of prominence in real world workloads. As a class, the most 
 unsettling difference between FreeBSD and Linux is in file system operations. Linux 
 scales near linearly in many cases where FreeBSD stops scaling at 4 hardware
-threads.<!-- fstatat1, lseek1, open1, read1, bsd12/Linux intel / AMD -->
+threads.
+[![](/media/plots/bsd-linux/fstat1.png)](/media/plots/bsd-linux/fstat1.png)
+[![](/media/plots/bsd-linux/lseek1.png)](/media/plots/bsd-linux/lseek1.png)
+[![](/media/plots/bsd-linux/open1.png)](/media/plots/bsd-linux/open1.png)
+[![](/media/plots/bsd-linux/read1.png)](/media/plots/bsd-linux/read1.png)
 
 
 Given more time we would have provided benchmarks with more real world workloads
