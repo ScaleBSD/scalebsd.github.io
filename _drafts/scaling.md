@@ -183,6 +183,36 @@ than the mid-level Xeon 6130. Nonetheless, the more complex EPYC is likely to
 show very different scaling characteristics and a higher penalty for poor
 locality.
 
+The first thing of note is that the multithreaded variants of most benchmarks scale 
+much more poorly than their multi-process counterparts.The shared address space, file 
+descriptor array, and proc structure all require added locking for the multithreaded 
+case.In the cases where the benchmarks do scale, the curve typicaly flattens at the 
+halfway mark. This is because we move from a regime of 1 benchmark thread or process
+per core to oversubscribing the cores and using both hardware threads.
+
+There are a number of notable improvements going from FreeBSD 11 to FreeBSD 12.The
+getuid benchmark shows that system call overhead has been reduced by more than 50%. <!-- getuid -->
+Page fault performance has improve by 20-80x. <!-- page_fault{1-3} --> FreeBSD actually
+outperforms Linux on "separate file private mapping page fault" <!-- page_fault2 BSD/Linux-->
+Anonymous memory mmap/munmap of 128MB has improved substantially and currently
+outperforms Linux. <!-- mmap1 bsd11/12/Linux --> Unix doamin socket performance has 
+improved by 19x. Performance previously flattened out at eight
+hardware threads, but now continues to increase up to 128 hardware threads.<!-- unix1 -->
+At least as of Linux 4.15 FreeBSD actually scales better than Linux on UNIX sockets.
+Separate file read still peaks at 32 hardware threads, but it's an 8x improvement. <!-- read1, readseek1 -->
+
+Unfortunately, there are a few areas where underinvestment shows through quite clearly.
+Although there was an improvement in the brk benchmark from changing handling of 
+swap reservations, <!-- brk1 FreeBSD11/12 --> there are several other system-wide
+serialization points. Linux scales near linearly here, and at its peak is capable
+of performing 32x as many brk ops/s. Arguably this isn't that big a deal in practice
+due to its relative lack of prominence in real world workloads. As a class, the most 
+unsettling difference between FreeBSD and Linux is in file system operations. Linux 
+scales near linearly in many cases where FreeBSD stops scaling at 4 hardware
+threads.<!-- fstatat1, lseek1, open1, read1, -->
+
+
+
                     FILL IN HERE.
 
 
