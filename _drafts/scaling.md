@@ -239,7 +239,8 @@ to bridge the gaps. -->
 ## Alternative Approaches
 Where do we go from here? Benchmarks can identify how well a system performs
 but are specific to one workload and configuration. Microbenchmarks are useful 
-for identifying system bottlenecks but they're clearly too ad hoc in their coverage. 
+for identifying system bottlenecks. However, they don't provide a way to systematically
+guarantee the absence of scaling limitations.
 Is there a way to more consistently identify issues? Up until recently the answer was 
 no. However, work in 2014 by Clements [Clements, 2014] built on the notion of 
 disjoint-access-parallel memory systems [Israeli, 94] to rigorously identify 
