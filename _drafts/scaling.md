@@ -192,7 +192,9 @@ halfway mark. This is because we move from a regime of 1 benchmark thread or pro
 per core to oversubscribing the cores and using both hardware threads.
 
 There are a number of notable improvements going from FreeBSD 11 to FreeBSD 12.The
-getuid benchmark shows that system call overhead has been reduced by more than 50%. <!-- getuid bsd11/12 intel/AMD-->
+getuid benchmark shows that system call overhead has been reduced by more than 50%. 
+[![](/media/plots/bsd11-12/getuid1.png)](/media/plots/bsd11-12/getuid1.png)
+<!-- getuid bsd11/12 intel/AMD-->
 Page fault performance has improve by 20-80x. <!-- page_fault{1-3} bsd11/bsd12 intel/amd --> 
 Anonymous memory mmap/munmap of 128MB has improved substantially and currently
 outperforms Linux. <!-- mmap1 bsd11/12/Linux  AMD --> Unix doamin socket performance has 
