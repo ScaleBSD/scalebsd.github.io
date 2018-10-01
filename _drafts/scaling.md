@@ -194,14 +194,28 @@ per core to oversubscribing the cores and using both hardware threads.
 There are a number of notable improvements going from FreeBSD 11 to FreeBSD 12.The
 getuid benchmark shows that system call overhead has been reduced by more than 50%. 
 [![](/media/plots/bsd11-12/getuid1.png)](/media/plots/bsd11-12/getuid1.png)
-<!-- getuid bsd11/12 intel/AMD-->
-Page fault performance has improve by 20-80x. <!-- page_fault{1-3} bsd11/bsd12 intel/amd --> 
+Page fault performance has improved by 20-80x. 
+[![](/media/plots/bsd11-12/page_fault1.png)](/media/plots/bsd11-12/page_fault1.png)
+[![](/media/plots/bsd11-12/page_fault2.png)](/media/plots/bsd11-12/page_fault2.png)
+[![](/media/plots/bsd11-12/page_fault3.png)](/media/plots/bsd11-12/page_fault3.png)
+
 Anonymous memory mmap/munmap of 128MB has improved substantially and currently
-outperforms Linux. <!-- mmap1 bsd11/12/Linux  AMD --> Unix doamin socket performance has 
-improved by 19x. Performance previously flattened out at eight
-hardware threads, but now continues to increase up to 128 hardware threads.<!-- unix1 bsd11/12/Linux AMD-->
+outperforms Linux. 
+[![](/media/plots/bsd11-12/mmap1.png)](/media/plots/bsd11-12/mmap1.png)
+[![](/media/plots/bsd-linux/mmap1.png)](/media/plots/bsd-linux/mmap1.png)
+
+
+Unix domain socket performance has improved by 19x. Performance previously flattened out at eight
+hardware threads, but now continues to increase up to 128 hardware threads.
+[![](/media/plots/bsd11-12/mmap1.png)](/media/plots/bsd11-12/unix1.png)
+
 At least as of Linux 4.15 FreeBSD actually scales better than Linux on UNIX sockets.
-Separate file read still peaks at 32 hardware threads, but it's an 8x improvement. <!-- read1, readseek1 bsd11/12 intel/amd -->
+[![](/media/plots/bsd-linux/mmap1.png)](/media/plots/bsd-linux/unix1.png)
+
+Separate file read still peaks at 32 hardware threads, but it's an 8x improvement
+[![](/media/plots/bsd11-12/read1.png)](/media/plots/bsd11-12/read1.png)
+[![](/media/plots/bsd11-12/readseek1.png)](/media/plots/bsd11-12/readseek1.png)
+
 
 Unfortunately, there are a few areas where underinvestment shows through quite clearly.
 Although there was an improvement in the brk benchmark from changing handling of 
@@ -212,10 +226,6 @@ due to its relative lack of prominence in real world workloads. As a class, the 
 unsettling difference between FreeBSD and Linux is in file system operations. Linux 
 scales near linearly in many cases where FreeBSD stops scaling at 4 hardware
 threads.<!-- fstatat1, lseek1, open1, read1, bsd12/Linux intel / AMD -->
-
-
-
-                    FILL IN HERE.
 
 
 Given more time we would have provided benchmarks with more real world workloads
