@@ -207,10 +207,10 @@ outperforms Linux.
 
 Unix domain socket performance has improved by 19x. Performance previously flattened out at eight
 hardware threads, but now continues to increase up to 128 hardware threads.
-[![](/media/plots/bsd11-12/mmap1.png)](/media/plots/bsd11-12/unix1.png)
+[![](/media/plots/bsd11-12/unix1.png)](/media/plots/bsd11-12/unix1.png)
 
 At least as of Linux 4.15 FreeBSD actually scales better than Linux on UNIX sockets.
-[![](/media/plots/bsd-linux/mmap1.png)](/media/plots/bsd-linux/unix1.png)
+[![](/media/plots/bsd-linux/unix1.png)](/media/plots/bsd-linux/unix1.png)
 
 Separate file read still peaks at 32 hardware threads, but it's an 8x improvement
 [![](/media/plots/bsd11-12/read1.png)](/media/plots/bsd11-12/read1.png)
