@@ -374,6 +374,7 @@ FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit'
 
 ## Appendix B Will-It-Scale Results
 
+### FreeBSD11 vs FreeBSD12
 [![](/media/plots/bsd11-12/brk1.png)](/media/plots/bsd11-12/brk1.png)
 [![](/media/plots/bsd11-12/context_switch1.png)](/media/plots/bsd11-12/context_switch1.png)
 [![](/media/plots/bsd11-12/dup1.png)](/media/plots/bsd11-12/dup1.png)
@@ -417,6 +418,53 @@ FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit'
 [![](/media/plots/bsd11-12/writeseek1.png)](/media/plots/bsd11-12/writeseek1.png)
 [![](/media/plots/bsd11-12/writeseek2.png)](/media/plots/bsd11-12/writeseek2.png)
 [![](/media/plots/bsd11-12/writeseek3.png)](/media/plots/bsd11-12/writeseek3.png)
+
+
+### FreeBSD12 vs Ubuntu 18 (Linux 4.15.0-36)
+[![](/media/plots/bsd-linux/brk1.png)](/media/plots/bsd-linux/brk1.png)
+[![](/media/plots/bsd-linux/context_switch1.png)](/media/plots/bsd-linux/context_switch1.png)
+[![](/media/plots/bsd-linux/dup1.png)](/media/plots/bsd-linux/dup1.png)
+[![](/media/plots/bsd-linux/fstat1.png)](/media/plots/bsd-linux/fstat1.png)
+[![](/media/plots/bsd-linux/fstatat1.png)](/media/plots/bsd-linux/fstatat1.png)
+[![](/media/plots/bsd-linux/fstatat2.png)](/media/plots/bsd-linux/fstatat2.png)
+[![](/media/plots/bsd-linux/fstatat3.png)](/media/plots/bsd-linux/fstatat3.png)
+[![](/media/plots/bsd-linux/getuid1.png)](/media/plots/bsd-linux/getuid1.png)
+[![](/media/plots/bsd-linux/lock1.png)](/media/plots/bsd-linux/lock1.png)
+[![](/media/plots/bsd-linux/lock2.png)](/media/plots/bsd-linux/lock2.png)
+[![](/media/plots/bsd-linux/open1.png)](/media/plots/bsd-linux/open1.png)
+[![](/media/plots/bsd-linux/open2.png)](/media/plots/bsd-linux/open2.png)
+[![](/media/plots/bsd-linux/page_fault1.png)](/media/plots/bsd-linux/page_fault1.png)
+[![](/media/plots/bsd-linux/page_fault2.png)](/media/plots/bsd-linux/page_fault2.png)
+[![](/media/plots/bsd-linux/page_fault3.png)](/media/plots/bsd-linux/page_fault3.png)
+[![](/media/plots/bsd-linux/page_fault4.png)](/media/plots/bsd-linux/page_fault4.png)
+[![](/media/plots/bsd-linux/pipe1.png)](/media/plots/bsd-linux/pipe1.png)
+[![](/media/plots/bsd-linux/poll1.png)](/media/plots/bsd-linux/poll1.png)
+[![](/media/plots/bsd-linux/poll2.png)](/media/plots/bsd-linux/poll2.png)
+[![](/media/plots/bsd-linux/posix_semaphore1.png)](/media/plots/bsd-linux/posix_semaphore1.png)
+[![](/media/plots/bsd-linux/pread1.png)](/media/plots/bsd-linux/pread1.png)
+[![](/media/plots/bsd-linux/pread2.png)](/media/plots/bsd-linux/pread2.png)
+[![](/media/plots/bsd-linux/pread3.png)](/media/plots/bsd-linux/pread3.png)
+[![](/media/plots/bsd-linux/pthread_mutex1.png)](/media/plots/bsd-linux/pthread_mutex1.png)
+[![](/media/plots/bsd-linux/pthread_mutex2.png)](/media/plots/bsd-linux/pthread_mutex2.png)
+[![](/media/plots/bsd-linux/pwrite1.png)](/media/plots/bsd-linux/pwrite1.png)
+[![](/media/plots/bsd-linux/pwrite2.png)](/media/plots/bsd-linux/pwrite2.png)
+[![](/media/plots/bsd-linux/pwrite3.png)](/media/plots/bsd-linux/pwrite3.png)
+[![](/media/plots/bsd-linux/read1.png)](/media/plots/bsd-linux/read1.png)
+[![](/media/plots/bsd-linux/read2.png)](/media/plots/bsd-linux/read2.png)
+[![](/media/plots/bsd-linux/readseek1.png)](/media/plots/bsd-linux/readseek1.png)
+[![](/media/plots/bsd-linux/readseek2.png)](/media/plots/bsd-linux/readseek2.png)
+[![](/media/plots/bsd-linux/readseek3.png)](/media/plots/bsd-linux/readseek3.png)
+[![](/media/plots/bsd-linux/sched_yield.png)](/media/plots/bsd-linux/sched_yield.png)
+[![](/media/plots/bsd-linux/select1.png)](/media/plots/bsd-linux/select1.png)
+[![](/media/plots/bsd-linux/signal1.png)](/media/plots/bsd-linux/signal1.png)
+[![](/media/plots/bsd-linux/unix.png)](/media/plots/bsd-linux/unix1.png)
+[![](/media/plots/bsd-linux/unlink1.png)](/media/plots/bsd-linux/unlink1.png)
+[![](/media/plots/bsd-linux/unlink2.png)](/media/plots/bsd-linux/unlink2.png)
+[![](/media/plots/bsd-linux/write1.png)](/media/plots/bsd-linux/write1.png)
+[![](/media/plots/bsd-linux/writeseek1.png)](/media/plots/bsd-linux/writeseek1.png)
+[![](/media/plots/bsd-linux/writeseek2.png)](/media/plots/bsd-linux/writeseek2.png)
+[![](/media/plots/bsd-linux/writeseek3.png)](/media/plots/bsd-linux/writeseek3.png)
+
 
 ## Bibliography
 
