@@ -119,7 +119,7 @@ refcount.
 
 The observed reference count can safely be different from the "true" reference count 
 if we can safely handle zero detection correctly. The different approaches to scalable 
-reference county rely on this insight. Although there are other approaches to this in 
+reference counts rely on this insight. Although there are other approaches to this in 
 the literature [Ellen, 2007], the ones I consider most interesting are Linux's percpu 
 refcount [Corbet, 2013] and Refcache [Clements, 2013]. The former is a per-cpu counter that 
 degrades to a traditional atomically updated reference count when the initial reference 
