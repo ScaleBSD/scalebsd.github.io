@@ -291,9 +291,14 @@ tool called _COMMUTER_ which:
 
 He applied this to 18 POSIX system calls to generate 26,238 test cases and used 
 these to compare Linux with sv6, a research OS developed by his group. He found that
-on Linux 17,206 cases scale vs 26,115 on sv6. The collection of test cases that failed 
+on Linux 3.8 17,206 cases scale vs 26,115 on sv6. The collection of test cases that failed 
 to scale can be used as a starting point for redesigning subsystems just as the 
 will-it-scale benchmarks have enabled us to identify a much narrower set of issues.
+
+![](/_drafts/scaling/linux-commuter.png)
+![](/_drafts/scaling/sv6-commuter.png)
+
+
 
 Porting COMMUTER to work with FreeBSD would be an interesting avenue for future work.
 
