@@ -297,6 +297,54 @@ will-it-scale benchmarks have enabled us to identify a much narrower set of issu
 
 Porting COMMUTER to work with FreeBSD would be an interesting avenue for future work.
 
+## Bibliography
+
+\[Attiya, 2011\] Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M. M., Vechev, M. 2011. Laws of 
+order: expensive synchronization in concurrent algorithms cannot be eliminated. In Proceedings 
+of the 38th Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages: 487-498; 
+http://doi.acm.org/10.1145/1926385.1926442
+
+[Blanchard, 2013] Will-It-Scale benchmark suite. https://github.com/ScaleBSD/will-it-scale.
+
+\[Boyd, 2010\] S. Boyd-Wickizer, A. T. Clements, Y. Mao, A. Pesterev, M. F. Kaashoek, R. Morris, and N. Zeldovich. An analysis of Linux scalability to many cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI), Vancouver, Canada, Oct. 2010.
+
+[Corbet, 2013] Corbet, J.Per-CPU reference counts, July 2013. https://lwn.net/Articles/557478/
+
+[Clements, 2013] Clements,  A. T., M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable address spaces for multithreaded applications. In
+Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
+
+[Clements, 2014] Clements, A. T. The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
+
+[Culler, 1999] Culler, D. Singh, J. P., Gupta, A. Parallel Computer Architecture - A Hardware / Software Approach,
+Morgan Kaufman, 1999
+
+[Ellen, 2007] F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
+
+[Fraser, 2004] Fraser, K. Practical lock-freedom, Ph.D. Thesis, University of Cambridge Computer Laboratory, 2004
+
+[Hackenberg, 2009] D. Hackenberg,  D. Molka,  and W. Nagel.   Comparing cache architectures and coherency protocols on x86-64 multicore SMP systems.  MICRO 2009, pages 413–422.
+
+[Hart, 2007] Hart, T. E., McKenney, P. E., Demke Brown, A., Walpole, J. 2007. Performance of memory reclamation for lockless synchronization. Journal of Parallel and Distributed Computing 67(12): 1270-1285; 
+http://dx.doi.org/10.1016/j.jpdc.2007.04.010
+
+[Herlihy, 2008] Herlihy, M., Shavit, N. 2008. The Art of Multiprocessor Programming. San Francisco: Morgan Kaufmann Publishers Inc. 
+
+[McKenney, 2011] McKenney, P. E. 2011. Is parallel programming hard, and, if so, what can you do about it? kernel.org; 
+https://www.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html 
+ 
+[Michael, 2004] Michael, M. M. Hazard pointers: safe memory reclamation for lock-free
+objects, IEEE Trans. Parallel Distrib. Syst. 15 (6) (2004) 491–504.
+
+[Molka, 2015] Daniel Molka, Daniel Hackenberg, Robert Schöne, and Wolfgang E Nagel. 2015.
+Cache Coherence Protocol and Memory Performance of the Intel Haswell-EP
+Architecture. In Parallel Processing (ICPP), 2015 44th International Conference on.IEEE, 739–748.
+
+[Sorin, 2011] D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
+
+[Wang, 2016] Q. Wang, T. Stamler, and G. Parmer, “Parallel sections: Scaling system-level data-structures,” in
+Proceedings of the ACM EuroSys Conference, 2016
+
+
 ## Appendix A - FreeBSD Serialization Primitives
 
 #### mutex
@@ -466,49 +514,3 @@ FreeBSD 12. It is essentially in-kernel scaffolding built around ConcurrencyKit'
 [![](/media/plots/bsd-linux/writeseek3.png)](/media/plots/bsd-linux/writeseek3.png)
 
 
-## Bibliography
-
-\[Attiya, 2011\] Attiya, H., Guerraoui, R., Hendler, D., Kuznetsov, P., Michael, M. M., Vechev, M. 2011. Laws of 
-order: expensive synchronization in concurrent algorithms cannot be eliminated. In Proceedings 
-of the 38th Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages: 487-498; 
-http://doi.acm.org/10.1145/1926385.1926442
-
-[Blanchard, 2013] Will-It-Scale benchmark suite. https://github.com/ScaleBSD/will-it-scale.
-
-\[Boyd, 2010\] S. Boyd-Wickizer, A. T. Clements, Y. Mao, A. Pesterev, M. F. Kaashoek, R. Morris, and N. Zeldovich. An analysis of Linux scalability to many cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI), Vancouver, Canada, Oct. 2010.
-
-[Corbet, 2013] Corbet, J.Per-CPU reference counts, July 2013. https://lwn.net/Articles/557478/
-
-[Clements, 2013] Clements,  A. T., M.  F.  Kaashoek,  and  N.  Zeldovich. RadixVM: Scalable address spaces for multithreaded applications. In
-Proceedings of the ACM EuroSys Conference, Prague, Czech Republic, April 2013.
-
-[Clements, 2014] Clements, A. T. The scalable commutativity rule: Designing scalable software for multicore processors, Ph.D. dissertation, Massachusetts Institute of Technology, Jun. 2014. [Online]. Available: https://pdos.csail.mit.edu/papers/aclements-phd.pdf
-
-[Culler, 1999] Culler, D. Singh, J. P., Gupta, A. Parallel Computer Architecture - A Hardware / Software Approach,
-Morgan Kaufman, 1999
-
-[Ellen, 2007] F. Ellen, Y. Lev, V. Luchango, and M. Moir. SNZI: Scalable nonzero indicators. In Proceedings of the 26th ACM SIGACT-SIGOPS Symposium on Principles of Distributed Computing, Portland, OR, Aug. 2007.
-
-[Fraser, 2004] Fraser, K. Practical lock-freedom, Ph.D. Thesis, University of Cambridge Computer Laboratory, 2004
-
-[Hackenberg, 2009] D. Hackenberg,  D. Molka,  and W. Nagel.   Comparing cache architectures and coherency protocols on x86-64 multicore SMP systems.  MICRO 2009, pages 413–422.
-
-[Hart, 2007] Hart, T. E., McKenney, P. E., Demke Brown, A., Walpole, J. 2007. Performance of memory reclamation for lockless synchronization. Journal of Parallel and Distributed Computing 67(12): 1270-1285; 
-http://dx.doi.org/10.1016/j.jpdc.2007.04.010
-
-[Herlihy, 2008] Herlihy, M., Shavit, N. 2008. The Art of Multiprocessor Programming. San Francisco: Morgan Kaufmann Publishers Inc. 
-
-[McKenney, 2011] McKenney, P. E. 2011. Is parallel programming hard, and, if so, what can you do about it? kernel.org; 
-https://www.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html 
- 
-[Michael, 2004] Michael, M. M. Hazard pointers: safe memory reclamation for lock-free
-objects, IEEE Trans. Parallel Distrib. Syst. 15 (6) (2004) 491–504.
-
-[Molka, 2015] Daniel Molka, Daniel Hackenberg, Robert Schöne, and Wolfgang E Nagel. 2015.
-Cache Coherence Protocol and Memory Performance of the Intel Haswell-EP
-Architecture. In Parallel Processing (ICPP), 2015 44th International Conference on.IEEE, 739–748.
-
-[Sorin, 2011] D. J. Sorin, M. D. Hill, and D. A. Wood. A Primer on Memory Consistency and Cache Coherence. Morgan and Claypool, 2011.
-
-[Wang, 2016] Q. Wang, T. Stamler, and G. Parmer, “Parallel sections: Scaling system-level data-structures,” in
-Proceedings of the ACM EuroSys Conference, 2016
