@@ -3,6 +3,7 @@
 
 At Computex 2018, Intel unveiled a prototype 28-core system. Within a few months, AMD launched the world’s most parallel desktop processor, the ThreadRipper 2 featuring 32-cores (64 hardware threads). AMD’s EPYC2 is in the lab and rumored to be 64 cores (128 hardware threads) - bringing 256 hardware threads to a commodity server dual socket system. Historically, FreeBSD has existed at the "knee" of the hardware commodity curve. In order to maintain its relevance in the server space, FreeBSD needs to keep pace with the latest processor developments.
 
+## Processor Evolution
 As core count has increased the designs have gotten steadily more complicated. AMD's Shanghai and Intel's Nehalem used a broadcast bust for handling cache coherence. Intel's Haswell later changed this to multiple rings on chip. And with Skylake
 Intel has moved to a mesh.
 ![](/_drafts/scaling/Diagrams.svg)
@@ -12,6 +13,7 @@ of four chips (often referred to as "chiplets").
 ![](/_drafts/scaling/Diagrams2.svg)
 
 
+## Defining Scalability
 Scalability can be defined on a number of axes \[Culler, 1999\]: 
  - Problem-Constrained `strong scaling` - The user wants to use a larger machine to solve the same problem faster. As the number of processors available to complete a task increases, the extent to which the time complete the problem decreases:
    ```
