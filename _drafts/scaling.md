@@ -8,8 +8,7 @@ As core count has increased the designs have gotten steadily more complicated. A
 Intel has moved to a mesh.
 ![](/_drafts/scaling/Diagrams.svg)
 
-AMD has taken a yield-centric focus scaling up.Each chip consists of two core complexes (CCX) and an EPYC package consists
-of four chips (often referred to as "chiplets").
+AMD has taken a yield-centric focus to scaling up by reusing the same design across its product line.Each chip consists of two core complexes (CCX) and an EPYC package consists of four chips (often referred to as "chiplets").
 ![](/_drafts/scaling/Diagrams2.svg)
 
 
